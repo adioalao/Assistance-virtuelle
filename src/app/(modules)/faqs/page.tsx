@@ -8,7 +8,71 @@ async function getData(): Promise<Question[]> {
             id: "728ed52f",
             categorie: "Excel",
             question: "Comment créer un nouveau classeur dans Excel ?",
-            reponse: "Je ne sais pas",
+            reponse: `Je ne sais pas.
+            Je ne sais pas.Je ne sais pas.Je ne sais pas.Je ne sais pas.
+            Je ne sais pas.Je ne sais pas.Je ne sais pas.Je ne sais pas.
+            Je ne sais pas.Je ne sais pas.
+            Je ne sais pas.Je ne sais pas.
+            Je ne sais pas.
+\\documentclass[a4paper,10pt]{article}
+\\usepackage[utf8]{inputenc}
+
+%opening
+\\title{}
+\\author{}
+
+\\\begin{document}
+
+\\maketitle
+
+\\begin{abstract}
+
+\\end{abstract}
+\\begin{enumerate}
+ \\item Copie le fichier le clavier personnalisé dans vers
+    \\begin{verbatim}
+   /usr/share/X11/xkb/symbols/
+ \\end{verbatim}
+ \\item Ouvre le fichier :
+ \\begin{verbatim}
+  sudo vim /usr/share/X11/xkb/rules/evdev.xml
+ \\end{verbatim}
+ À la fin du bloc <layoutList>, ajoute ton layout personnalisé :
+ \\begin{verbatim}
+
+<layout>
+  <configItem>
+    <name>custom_us</name>
+    <shortDescription>custom_us</shortDescription>
+    <description>custom_us</description>
+    <languageList>
+      <iso639Id>eng</iso639Id>
+    </languageList>
+  </configItem>
+</layout>
+ \\end{verbatim}
+
+ \\item Modifie ce fichier :
+ \\begin{verbatim}
+  sudo nano /etc/default/keyboard
+ \\end{verbatim}
+Et mets ceci :
+ \\begin{verbatim}
+    XKBLAYOUT="custom_us"
+    XKBMODEL="pc105"
+    XKBVARIANT=""
+    XKBOPTIONS=""
+ \\end{verbatim}
+ pour le rendre disponible sur l'ecran de démarrage
+ \\item Recharge le système de clavier ou redémarre en tapant
+ \\begin{verbatim}
+  sudo udevadm trigger --subsystem-match=input --action=change
+ \\end{verbatim}
+
+\\end{enumerate}
+
+
+\\end{document} `,
             dateCreation: "01/05/24",
             dateModification: "24/05/25"
         },

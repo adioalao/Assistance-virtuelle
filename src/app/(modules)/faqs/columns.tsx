@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -100,7 +101,7 @@ export const columns: ColumnDef<Question>[] = [
 						<AlertDialogContent>
 							<AlertDialogHeader>
 								<AlertDialogTitle>Réponse à la question</AlertDialogTitle>
-								<AlertDialogDescription>
+								<AlertDialogDescription className="max-h-64 overflow-auto text-black whitespace-pre-line">
 									{question.reponse}
 								</AlertDialogDescription>
 							</AlertDialogHeader>
@@ -110,30 +111,41 @@ export const columns: ColumnDef<Question>[] = [
 						</AlertDialogContent>
 					</AlertDialog>
 					<Dialog open={editQuestion} onOpenChange={setEditQuestion}>
-						<form>
-							<DialogContent className="sm:max-w-[425px]">
+						<form className="w-full">
+							<DialogContent className="sm:max-w-[500px] md:max-w-[700px] lg:max-w-[900px] max-h-[90vh] overflow-y-auto">
 								<DialogHeader>
-									<DialogTitle>Edit profile</DialogTitle>
+									<DialogTitle>Modifier la question</DialogTitle>
 									<DialogDescription>
-										Make changes to your profile here. Click save when you&apos;re
-										done.
+										Modifiez la question et sa réponse, puis cliquez sur "Enregistrer".
 									</DialogDescription>
 								</DialogHeader>
-								<div className="grid gap-4">
-									<div className="grid gap-3">
-										<Label htmlFor="name-1">Name</Label>
-										<Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+								<div className="grid gap-6 py-4">
+									<div className="grid gap-2">
+										<Label htmlFor="question-1">Question</Label>
+										<Textarea
+											id="question-1"
+											name="question"
+											defaultValue={question.question}
+											className="w-full min-h-[80px]"
+										/>
 									</div>
-									<div className="grid gap-3">
-										<Label htmlFor="username-1">Username</Label>
-										<Input id="username-1" name="username" defaultValue="@peduarte" />
+									<div className="grid gap-2">
+										<Label htmlFor="reponse-1">Réponse</Label>
+										<Textarea
+											id="reponse-1"
+											name="reponse"
+											defaultValue={question.reponse}
+											className="w-full min-h-[120px]"
+										/>
 									</div>
 								</div>
-								<DialogFooter>
+								<DialogFooter className="flex flex-row gap-2 justify-end">
 									<DialogClose asChild>
-										<Button variant="outline">Cancel</Button>
+										<Button variant="outline" type="button">
+											Annuler
+										</Button>
 									</DialogClose>
-									<Button type="submit">Save changes</Button>
+									<Button type="submit">Enregistrer</Button>
 								</DialogFooter>
 							</DialogContent>
 						</form>
