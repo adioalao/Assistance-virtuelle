@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardFooter } from '@/components/back-office/ui/card';
 import { CalendarCheck, MessageSquare, MessageSquareX } from 'lucide-react';
 import { ReactNode, ElementType } from "react";
 

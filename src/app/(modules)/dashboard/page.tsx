@@ -1,10 +1,7 @@
-import { CardGroup } from "@/components/custom/cardGroup";
-import { ChartAnsweredQuestionEvolution } from "@/components/custom/chartAnsweredQuestionEvolution";
+import { CardGroup } from "@/components/back-office/custom/cardGroup";
+import { ChartAnsweredQuestionEvolution } from "@/components/back-office/custom/chartAnsweredQuestionEvolution";
+import { ChartStatusRepartition } from '@/components/back-office/custom/chartStatusRepartition';
 
-import { ChartStatusRepartition } from '@/components/custom/chartStatusRepartition';
-/*
-import RecentQuestions from '@/components/custom/recentActivity/recentQuestions';
-  */
 export default function Dashboard() {
   return (
     <div>

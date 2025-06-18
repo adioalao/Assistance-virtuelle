@@ -4,14 +4,14 @@ import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
 import React from "react"
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/back-office/ui/button"
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/back-office/ui/dropdown-menu"
 
 import {
 	AlertDialog,
@@ -21,7 +21,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/back-office/ui/alert-dialog"
 
 import {
 	Dialog,
@@ -31,11 +31,9 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/back-office/ui/dialog"
+import { Label } from "@/components/back-office/ui/label"
+import { Textarea } from "@/components/back-office/ui/textarea"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.

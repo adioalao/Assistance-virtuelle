@@ -14,10 +14,10 @@ import {
   Users,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/back-office/nav-main"
+import { NavProjects } from "@/components/back-office/nav-projects"
+import { NavSecondary } from "@/components/back-office/nav-secondary"
+import { NavUser } from "@/components/back-office/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -26,7 +26,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/back-office/ui/sidebar"
 import Image from "next/image"
 
 const data = {
