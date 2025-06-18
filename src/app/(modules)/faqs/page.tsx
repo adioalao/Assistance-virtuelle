@@ -1,27 +1,25 @@
-import { columns, Question } from "./columns";
 import { DataTable } from "./data-table";
+import { columns, Question } from "./columns";
 
-async function getData(): Promise<Question[]> {
-	let data: Question[] = [];
+async function getFaqs(): Promise<{ faqs: Question[]; error: boolean }> {
 	try {
 		const res = await fetch("http://localhost:4000/api/faqs", { cache: "no-store" });
-		if (!res.ok) return data;
-		data = await res.json();
-		return data;
-	} catch (e) {
-		return data;
+		if (!res.ok) return { faqs: [], error: true };
+		const faqs = await res.json();
+		return { faqs, error: false };
+	} catch {
+		return { faqs: [], error: true };
 	}
 }
 
 export default async function FAQs() {
-	// const data: Question[] | string = await getData();
-	const data: Question[] | string = []
-	console.log(data);
+	const { faqs, error } = await getFaqs();
+	console.log(faqs, error);
 
 
 	return (
 		<div className="container mx-auto py-10">
-			<DataTable columns={columns} data={data} />
+			<DataTable initialFaqs={faqs} columns={columns} initialError={error} />
 		</div>
 	);
 }

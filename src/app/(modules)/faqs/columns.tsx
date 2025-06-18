@@ -39,11 +39,8 @@ import { Textarea } from "@/components/ui/textarea"
 // You can use a Zod schema here if you want.
 export type Question = {
 	id: string
-	categorie: string
 	question: string
 	reponse: string
-	dateCreation: string
-	dateModification: string
 }
 
 export const columns: ColumnDef<Question>[] = [
@@ -57,16 +54,19 @@ export const columns: ColumnDef<Question>[] = [
 		),
 	},
 	{
-		accessorKey: "categorie",
-		header: "Catégorie",
-	},
-	{
-		accessorKey: "dateCreation",
-		header: "Date de Création",
-	},
-	{
-		accessorKey: "dateModification",
-		header: "Date de dernière modification",
+		accessorKey: "reponse",
+		header: "Réponse",
+		cell: ({ row }) => {
+			const reponse = (row.getValue("reponse") as string) ?? ""
+			const maxLength = 80
+			return (
+				<div className="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] whitespace-pre-wrap break-words">
+					{reponse.length > maxLength
+						? reponse.slice(0, maxLength) + "..."
+						: reponse}
+				</div>
+			)
+		},
 	},
 	{
 		id: "actions",

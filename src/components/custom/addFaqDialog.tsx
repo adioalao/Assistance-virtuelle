@@ -1,31 +1,43 @@
-import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogHeader, DialogFooter } from "../ui/dialog"
-import { Button } from "../ui/button"
-import { Textarea } from "../ui/textarea"
-import React from "react"
+import React from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
-export const AddFaqDialog = React.memo(function AddFaqDialog({
+export function AddFaqDialog({
     open,
     onClose,
-    onAdd,
+    onFaqAdded,
 }: {
-    open: boolean
-    onClose: () => void
-    onAdd: (question: string, reponse: string) => void
+    open: boolean;
+    onClose: () => void;
+    onFaqAdded: () => void;
 }) {
-    const [question, setQuestion] = React.useState("")
-    const [reponse, setReponse] = React.useState("")
-    const [loading, setLoading] = React.useState(false)
+    const [contenu, setContenu] = React.useState("");
+    const [reponse, setReponse] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState("");
 
-    const handleSave = React.useCallback(() => {
-        onAdd(question, reponse, categorie)
+    const handleSave = async () => {
+        setLoading(true);
+        setError("");
+        try {
+            const res = await fetch("http://localhost:4000/api/faqs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ contenu, reponse }),
+            });
+            if (!res.ok) throw new Error("Erreur lors de l'ajout");
+            setContenu("");
+            setReponse("");
+            onFaqAdded(); // Demande au parent de rafraîchir la liste
+            onClose();
 
-        setQuestion("")
-        setReponse("")
-        onClose()
-    }, [onAdd, question, reponse, onClose])
-
-    console.log('Render: addFaqDialog');
-
+        } catch (e) {
+            setError("Erreur lors de l'ajout de la FAQ");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -41,8 +53,8 @@ export const AddFaqDialog = React.memo(function AddFaqDialog({
                         <label htmlFor="new-question" className="font-medium">Question</label>
                         <Textarea
                             id="new-question"
-                            value={question}
-                            onChange={e => setQuestion(e.target.value)}
+                            value={contenu}
+                            onChange={e => setContenu(e.target.value)}
                             className="w-full min-h-[80px]"
                         />
                     </div>
@@ -55,6 +67,7 @@ export const AddFaqDialog = React.memo(function AddFaqDialog({
                             className="w-full min-h-[120px]"
                         />
                     </div>
+                    {error && <div className="text-red-500">{error}</div>}
                 </div>
                 <DialogFooter>
                     <Button variant="outline" onClick={onClose}>
@@ -62,12 +75,12 @@ export const AddFaqDialog = React.memo(function AddFaqDialog({
                     </Button>
                     <Button
                         onClick={handleSave}
-                        disabled={!question || !reponse || loading}
+                        disabled={!setContenu || !reponse || loading}
                     >
                         {loading ? 'Enregistrement...' : 'Enregistrer'}
                     </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-    )
-})
+    );
+}
