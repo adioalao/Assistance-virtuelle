@@ -2,33 +2,33 @@
 import * as React from "react";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState
+	ColumnDef,
+	ColumnFiltersState,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	SortingState,
+	useReactTable,
+	VisibilityState
 } from "@tanstack/react-table";
 
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from "@/components/back-office/ui/dropdown-menu";
+	DropdownMenu,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/back-office/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
-import {Button} from "@/components/back-office/ui/button";
-import {Input} from "@/components/back-office/ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/back-office/ui/select";
-import {AddFaqDialog} from "@/components/back-office/custom/addFaqDialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AddFaqDialog } from "@/components/custom/addFaqDialog";
 
 
 interface DataTableProps<TData extends { categorie?: string }, TValue> {
@@ -39,9 +39,9 @@ interface DataTableProps<TData extends { categorie?: string }, TValue> {
 export function DataTable<TData extends {
 	categorie?: string;
 }, TValue>({
-	           columns,
-	           data
-           }: DataTableProps<TData, TValue>) {
+	columns,
+	data
+}: DataTableProps<TData, TValue>) {
 	// Ajoute un état local pour les FAQs
 	const [faqs, setFaqs] = React.useState(data);
 	const [selectCategory, setSelectCategory] = React.useState<string>("");
@@ -86,8 +86,8 @@ export function DataTable<TData extends {
 			// Appel API pour ajouter la FAQ
 			const res = await fetch("/api/faqs", {
 				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify({question, reponse, categorie})
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ question, reponse, categorie })
 
 			});
 			if (!res.ok) throw new Error("Erreur lors de l'ajout");
@@ -106,7 +106,7 @@ export function DataTable<TData extends {
 		<div>
 			<div className="flex justify-end">
 				<Button variant="default" size="lg" className="text-lg bg-blue-600 hover:bg-blue-600 hover:scale-105"
-				        onClick={() => setOpenAdd(true)}>
+					onClick={() => setOpenAdd(true)}>
 					Ajouter FAQs
 				</Button>
 			</div>
@@ -125,7 +125,7 @@ export function DataTable<TData extends {
 						table.getColumn("categorie")?.setFilterValue(value);
 					}}>
 						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Catégorie"/>
+							<SelectValue placeholder="Catégorie" />
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="all">Toutes les catégories</SelectItem>

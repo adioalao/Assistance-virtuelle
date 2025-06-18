@@ -1,10 +1,10 @@
 'use client';
 import type React from "react"
 import { cn } from "../../lib/utils"
-import { Button } from "@/components/back-office/ui/button"
-import { Card, CardContent } from "@/components/back-office/ui/card"
-import { Input } from "@/components/back-office/ui/input"
-import { Label } from "@/components/back-office/ui/label"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {

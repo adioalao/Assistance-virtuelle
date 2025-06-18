@@ -1,8 +1,8 @@
 "use client"
 
 import { Pie, PieChart } from "recharts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/back-office/ui/card"
-import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, } from "@/components/back-office/ui/chart"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/components/ui/card"
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, } from "@/components/ui/chart"
 const chartData = [
   { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
   { browser: "safari", visitors: 200, fill: "var(--color-safari)" },

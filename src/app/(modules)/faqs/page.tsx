@@ -9,7 +9,7 @@ async function getData(): Promise<Question[]> {
 		data = await res.json();
 		return data;
 	} catch (e) {
-
+		return data;
 	}
 }
 
