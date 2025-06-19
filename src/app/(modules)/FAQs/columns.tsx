@@ -15,6 +15,7 @@ import {
 
 import {
 	AlertDialog,
+	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
 	AlertDialogDescription,
@@ -34,11 +35,12 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { UpdateFaq } from "@/components/custom/updateFaq"
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Question = {
-	id: string
+	id: number
 	question: string
 	reponse: string
 }
@@ -72,8 +74,33 @@ export const columns: ColumnDef<Question>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			const question = row.original
+			const [openEdit, setOpenEdit] = React.useState(false)
 			const [openResponse, setOpenResponse] = React.useState(false)
-			const [editQuestion, setEditQuestion] = React.useState(false)
+			const [openDeleteAlert, setOpenDeleteAlert] = React.useState(false)
+			const [loadingDelete, setLoadingDelete] = React.useState(false)
+			const [errorDelete, setErrorDelete] = React.useState("")
+
+			const handleDelete = async () => {
+				setLoadingDelete(true)
+				setErrorDelete("")
+				try {
+					const res = await fetch(
+						`http://localhost:4000/api/faqs/`,
+						{
+							method: "DELETE",
+							headers: { "Content-Type": "application/json" },
+							body: JSON.stringify({ ids: [question.id] }),
+						}
+					)
+					if (!res.ok) throw new Error("Erreur lors de la suppression")
+					setOpenDeleteAlert(false)
+					window.location.reload() // Simple et efficace pour rafraîchir la liste
+				} catch (e) {
+					setErrorDelete("Erreur lors de la suppression")
+				} finally {
+					setLoadingDelete(false)
+				}
+			}
 
 			return (
 				<>
@@ -86,13 +113,15 @@ export const columns: ColumnDef<Question>[] = [
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Actions</DropdownMenuLabel>
-							<DropdownMenuItem onClick={() => setEditQuestion(true)}>
+							<DropdownMenuItem onClick={() => setOpenEdit(true)}>
 								Editer
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={() => setOpenResponse(true)}>
 								Voir Réponse
 							</DropdownMenuItem>
-							<DropdownMenuItem>Supprimer</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setOpenDeleteAlert(true)}>
+								Supprimer
+							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
 					<AlertDialog open={openResponse} onOpenChange={setOpenResponse}>
@@ -108,46 +137,39 @@ export const columns: ColumnDef<Question>[] = [
 							</AlertDialogFooter>
 						</AlertDialogContent>
 					</AlertDialog>
-					<Dialog open={editQuestion} onOpenChange={setEditQuestion}>
-						<form className="w-full">
-							<DialogContent className="sm:max-w-[500px] md:max-w-[700px] lg:max-w-[900px] max-h-[90vh] overflow-y-auto">
-								<DialogHeader>
-									<DialogTitle>Modifier la question</DialogTitle>
-									<DialogDescription>
-										Modifiez la question et sa réponse, puis cliquez sur "Enregistrer".
-									</DialogDescription>
-								</DialogHeader>
-								<div className="grid gap-6 py-4">
-									<div className="grid gap-2">
-										<Label htmlFor="question-1">Question</Label>
-										<Textarea
-											id="question-1"
-											name="question"
-											defaultValue={question.question}
-											className="w-full min-h-[80px]"
-										/>
-									</div>
-									<div className="grid gap-2">
-										<Label htmlFor="reponse-1">Réponse</Label>
-										<Textarea
-											id="reponse-1"
-											name="reponse"
-											defaultValue={question.reponse}
-											className="w-full min-h-[120px]"
-										/>
-									</div>
-								</div>
-								<DialogFooter className="flex flex-row gap-2 justify-end">
-									<DialogClose asChild>
-										<Button variant="outline" type="button">
-											Annuler
-										</Button>
-									</DialogClose>
-									<Button type="submit">Enregistrer</Button>
-								</DialogFooter>
-							</DialogContent>
-						</form>
-					</Dialog>
+					<AlertDialog open={openDeleteAlert} onOpenChange={setOpenDeleteAlert}>
+						<AlertDialogContent>
+							<AlertDialogHeader>
+								<AlertDialogTitle>Supprimer la FAQ ?</AlertDialogTitle>
+								<AlertDialogDescription>
+									Cette action est irréversible. Voulez-vous vraiment supprimer
+									cette FAQ ?
+								</AlertDialogDescription>
+							</AlertDialogHeader>
+							{errorDelete && (
+								<div className="text-red-500 text-sm mb-2">{errorDelete}</div>
+							)}
+							<AlertDialogFooter>
+								<AlertDialogCancel disabled={loadingDelete}>
+									Annuler
+								</AlertDialogCancel>
+								<AlertDialogAction
+									onClick={handleDelete}
+									disabled={loadingDelete}
+								>
+									{loadingDelete ? "Suppression..." : "Supprimer"}
+								</AlertDialogAction>
+							</AlertDialogFooter>
+						</AlertDialogContent>
+					</AlertDialog>
+					<UpdateFaq
+						open={openEdit}
+						onClose={() => setOpenEdit(false)}
+						onFaqUpdate={() => window.location.reload()}
+						id_FAQ={question.id}
+						initialQuestion={question.question}
+						initialReponse={question.reponse}
+					/>
 				</>
 			)
 		},

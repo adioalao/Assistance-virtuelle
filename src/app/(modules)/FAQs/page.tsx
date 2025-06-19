@@ -14,9 +14,6 @@ async function getFaqs(): Promise<{ faqs: Question[]; error: boolean }> {
 
 export default async function FAQs() {
 	const { faqs, error } = await getFaqs();
-	console.log(faqs, error);
-
-
 	return (
 		<div className="container mx-auto py-10">
 			<DataTable initialFaqs={faqs} columns={columns} initialError={error} />

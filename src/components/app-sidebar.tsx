@@ -37,13 +37,13 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "dashboard",
+      url: "Dashboard",
       icon: LayoutDashboard,
       isActive: true
     },
     {
       title: "FAQs",
-      url: "faqs",
+      url: "FAQs",
       icon: HelpCircleIcon,
     },
     {
