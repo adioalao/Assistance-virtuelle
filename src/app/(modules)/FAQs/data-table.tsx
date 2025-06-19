@@ -172,11 +172,17 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 										<TableRow
 											key={row.original.id}
 											onPointerDown={() => {
-												let timer = setTimeout(() => handleRowLongPress(row.original.id), 500); // 500ms = appui long
+												let timer = setTimeout(() => handleRowLongPress(row.original.id), 400);
 												const clear = () => clearTimeout(timer);
 												document.addEventListener("pointerup", clear, { once: true });
 												document.addEventListener("pointerleave", clear, { once: true });
 											}}
+											onClick={() => {
+												if (selectionMode) {
+													toggleRowSelection(row.original.id);
+												}
+											}}
+											style={{ cursor: selectionMode ? "pointer" : "default" }}
 										>
 											{selectionMode && (
 												<TableCell>
@@ -184,6 +190,7 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 														type="checkbox"
 														checked={!!rowSelection[row.original.id]}
 														onChange={() => toggleRowSelection(row.original.id)}
+														onClick={e => e.stopPropagation()} // Empêche le double toggle si on clique sur la checkbox
 													/>
 												</TableCell>
 											)}
