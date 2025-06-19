@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, flexRender } from "@tanstack/react-table";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { AddFaqDialog } from "@/components/custom/addFaqDialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/back-office/ui/table";
+import { Button } from "@/components/back-office/ui/button";
+import { Input } from "@/components/back-office/ui/input";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/back-office/ui/dropdown-menu";
+import { AddFaqDialog } from "@/components/back-office/custom/addFaqDialog";
 import { Question, columns } from "./columns";
 
 type DataTableProps = {

@@ -2,7 +2,7 @@
 'use client';
 import React, { useEffect, useState } from "react";
 import { format, isToday, isYesterday, subDays, isWithinInterval } from "date-fns";
-import fr from "date-fns/locale/fr";
+// import fr from "date-fns/locale/fr";
 import { useSession } from "next-auth/react";
 
 // interface Message {
@@ -22,10 +22,10 @@ import { useSession } from "next-auth/react";
 //   const [chatrooms, setChatRooms]= useState<ChatroomType[]>([]);
 
 //   useEffect(() => { 
-    
+
 //     const fetchHistory = async () => {
 //       try {
-   
+
 //         const res = await fetch('/api/history');
 //         const data = await res.json();
 
@@ -33,7 +33,7 @@ import { useSession } from "next-auth/react";
 //           console.error(data.error);
 //         } else {
 //           setChatRooms(data.chatroom); // Mettre à jour l'état des messages
-          
+
 //         }
 //       } catch (error) {
 //         console.error('Erreur lors de la récupération de l\'historique', error);

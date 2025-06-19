@@ -1,7 +1,7 @@
 import React from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/back-office/ui/dialog";
+import { Button } from "@/components/back-office/ui/button";
+import { Textarea } from "@/components/back-office/ui/textarea";
 
 export function UpdateFaq({
     open,

@@ -19,7 +19,8 @@ export const metadata: Metadata = {
     </html>
   );
 } */
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/back-office/theme-provider"
+import { AuthProvider } from "./front-office/providers";
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -28,14 +29,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="en" suppressHydrationWarning>
         <head />
         <body>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          <AuthProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
+          </AuthProvider>
+          {/* {children} */}
         </body>
       </html>
     </>

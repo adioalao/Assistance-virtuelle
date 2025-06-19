@@ -29,16 +29,17 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-        console.log("utilisateur",user);
-      
+        console.log("utilisateur", user);
 
-        if (!user || !user.password){
-        return null;
-      }
+
+        if (!user || !user.password) {
+          return null;
+        }
         const isValid = await bcrypt.compare(credentials.password, user.password);
-        if (!isValid){
-          console.log("Mot de passe invalide",isValid);
-          return null;}
+        if (!isValid) {
+          console.log("Mot de passe invalide", isValid);
+          return null;
+        }
 
         return {
           id: user.id,
@@ -55,28 +56,28 @@ export const authOptions: NextAuthOptions = {
   },
 
   session: {
-    strategy: "jwt", 
+    strategy: "jwt",
   },
 
   secret: process.env.NEXTAUTH_SECRET,
 
   callbacks: {
-  //   async jwt({ token, user }: { token: JWT; user?: any }) {
-  //     if (user) {
-  //       token.id = user.id;
-  //     }
-  //     return token;
-  //   },
+    //   async jwt({ token, user }: { token: JWT; user?: any }) {
+    //     if (user) {
+    //       token.id = user.id;
+    //     }
+    //     return token;
+    //   },
 
-  //   async session({ session, token }: { session: Session; token: JWT }) {
-  //     if (token?.id) {
-  //       (session as any).userId = token.id;
-  //     }
-  //     return session;
-  //   },
-  // },
-   async session({ session, token }) {
-     if (session.user && token.sub) {
+    //   async session({ session, token }: { session: Session; token: JWT }) {
+    //     if (token?.id) {
+    //       (session as any).userId = token.id;
+    //     }
+    //     return session;
+    //   },
+    // },
+    async session({ session, token }) {
+      if (session.user && token.sub) {
         session.user.id = token.sub;
       }
       return session;
