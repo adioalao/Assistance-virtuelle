@@ -1,5 +1,6 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import Pathname from "@/components/custom/pathname"
+import { ModeToggle } from "@/components/custom/toggleTheme"
 import {
 	Breadcrumb,
 } from "@/components/ui/breadcrumb"
@@ -15,7 +16,7 @@ export default function Page({ children }: { children: React.ReactNode }) {
 		<SidebarProvider>
 			<AppSidebar />
 			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2">
+				<header className="flex justify-between h-16 shrink-0 items-center gap-2">
 					<div className="flex items-center gap-2 px-4">
 						<SidebarTrigger className="-ml-1" />
 						<Separator
@@ -24,7 +25,11 @@ export default function Page({ children }: { children: React.ReactNode }) {
 						/>
 						<Breadcrumb>
 							<Pathname />
+
 						</Breadcrumb>
+					</div>
+					<div className="mx-4">
+						<ModeToggle />
 					</div>
 				</header>
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -34,3 +39,4 @@ export default function Page({ children }: { children: React.ReactNode }) {
 		</SidebarProvider>
 	)
 }
+
