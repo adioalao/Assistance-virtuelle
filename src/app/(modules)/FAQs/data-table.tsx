@@ -19,6 +19,9 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 	const [loading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState(initialError);
 	const [openAdd, setOpenAdd] = React.useState(false);
+	const [rowSelection, setRowSelection] = React.useState<{ [key: string]: boolean }>({});
+	const [selectionMode, setSelectionMode] = React.useState(false);
+	const [deleting, setDeleting] = React.useState(false);
 	// Rafraîchir la liste après ajout
 	const fetchFaqs = React.useCallback(async () => {
 		setLoading(true);
@@ -26,7 +29,9 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 		try {
 			const res = await fetch("http://localhost:4000/api/faqs", { cache: "no-store" });
 			if (!res.ok) throw new Error();
-			const data = await res.json();
+			let data = await res.json();
+			// Trie par id décroissant (plus récent en premier)
+			data = data.sort((a: Question, b: Question) => b.id - a.id);
 			setFaqs(data);
 		} catch {
 			setError(true);
@@ -47,6 +52,39 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 		state: {},
 	});
 
+	const handleRowLongPress = (faqId: number) => {
+		setSelectionMode(true);
+		setRowSelection({ [faqId]: true });
+	};
+
+	const toggleRowSelection = (faqId: number) => {
+		setRowSelection(prev => ({
+			...prev,
+			[faqId]: !prev[faqId]
+		}));
+	};
+
+	const handleDeleteSelected = async () => {
+		setDeleting(true);
+		const ids = Object.entries(rowSelection)
+			.filter(([_, selected]) => selected)
+			.map(([id]) => Number(id));
+		if (ids.length === 0) return;
+		try {
+			await fetch("http://localhost:4000/api/faqs/", {
+				method: "DELETE",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ ids }),
+			});
+			await fetchFaqs();
+			setRowSelection({});
+			setSelectionMode(false);
+		} catch {
+			alert("Erreur lors de la suppression");
+		} finally {
+			setDeleting(false);
+		}
+	};
 
 	return (
 		<div>
@@ -114,6 +152,7 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 							<TableHeader>
 								{table.getHeaderGroups().map((headerGroup) => (
 									<TableRow key={headerGroup.id}>
+										{selectionMode && <TableHead />}
 										{headerGroup.headers.map((header) => (
 											<TableHead key={header.id}>
 												{header.isPlaceholder
@@ -130,7 +169,24 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 							<TableBody>
 								{table.getRowModel().rows?.length ? (
 									table.getRowModel().rows.map((row) => (
-										<TableRow key={row.id}>
+										<TableRow
+											key={row.original.id}
+											onPointerDown={() => {
+												let timer = setTimeout(() => handleRowLongPress(row.original.id), 500); // 500ms = appui long
+												const clear = () => clearTimeout(timer);
+												document.addEventListener("pointerup", clear, { once: true });
+												document.addEventListener("pointerleave", clear, { once: true });
+											}}
+										>
+											{selectionMode && (
+												<TableCell>
+													<input
+														type="checkbox"
+														checked={!!rowSelection[row.original.id]}
+														onChange={() => toggleRowSelection(row.original.id)}
+													/>
+												</TableCell>
+											)}
 											{row.getVisibleCells().map((cell) => (
 												<TableCell key={cell.id}>
 													{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -166,6 +222,20 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 							Suivant
 						</Button>
 					</div>
+				</div>
+			)}
+			{selectionMode && (
+				<div className="mb-2 flex gap-2">
+					<Button
+						variant="destructive"
+						onClick={handleDeleteSelected}
+						disabled={Object.values(rowSelection).every(v => !v) || deleting}
+					>
+						{deleting ? "Suppression..." : "Supprimer"}
+					</Button>
+					<Button variant="outline" onClick={() => { setSelectionMode(false); setRowSelection({}); }}>
+						Annuler
+					</Button>
 				</div>
 			)}
 			<AddFaqDialog
