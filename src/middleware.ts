@@ -12,29 +12,29 @@ export async function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
 
   // Non connecté : rediriger vers /auth/login
-  // if (!token) {
-  //   url.pathname = "/auth/login";
-  //   return NextResponse.redirect(url);
-  // }
+  if (!token) {
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
+  }
 
   // Si l'utilisateur va sur la racine /
-  // if (req.nextUrl.pathname === "/") {
-  //   if (token.role === "admin") {
-  //     url.pathname = "/back-office";
-  //     return NextResponse.redirect(url);
-  //   } else if (token.role === "user") {
-  //     url.pathname = "/front-office";
-  //     return NextResponse.redirect(url);
-  //   } else {
-  //     url.pathname = "/unauthorized";
-  //     return NextResponse.redirect(url);
-  //   }
-  // }
+  if (req.nextUrl.pathname === "/") {
+    if (token.role === "admin") {
+      url.pathname = "/back-office";
+      return NextResponse.redirect(url);
+    } else if (token.role === "user") {
+      url.pathname = "/front-office";
+      return NextResponse.redirect(url);
+    } else {
+      url.pathname = "/unauthorized";
+      return NextResponse.redirect(url);
+    }
+  }
 
   return NextResponse.next();
 }
 
 // Appliquer le middleware à toutes les routes sauf auth, static et Next.js internals
 export const config = {
-  matcher: ["/((?!auth|_next|favicon.ico|public).*)"],
+  matcher: ["/((?!auth|api/auth|_next|favicon.ico|public).*)"],
 };
