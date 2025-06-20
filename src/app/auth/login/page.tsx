@@ -14,7 +14,7 @@ export default function LoginPage() {
   // Si l'utilisateur est déjà connecté, redirige-le vers la page d'accueil
   useEffect(() => {
     if (session) {
-      router.push("/"); // Redirection vers la page d'accueil si l'utilisateur est connecté
+      router.push("/front-office"); // Redirection vers la page d'accueil si l'utilisateur est connecté
     }
   }, [session, router]);
 
@@ -24,15 +24,14 @@ export default function LoginPage() {
     // Essayer de se connecter avec les informations fournies
     const res = await signIn("credentials", {
       redirect: false,
-      email, 
+      email,
       password,
     });
     console.log("Résultat connexion :", res);
 
     if (res?.error) {
-      setError("Email ou mot de passe incorrect"); 
+      setError("Email ou mot de passe incorrect");
     } else {
-      
       router.push("/");
     }
   };

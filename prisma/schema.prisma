@@ -58,12 +58,11 @@ model account {
 }
 
 model chatroom {
-  id        Int       @id @default(autoincrement())
-  titre     String?
-  status    String
-  idUser    Int
+  id     Int     @id @default(autoincrement())
+  titre  String?
+  status String
+  idUser Int
 
-  
   createdAt DateTime  @default(now())
   user      user      @relation(fields: [idUser], references: [id], map: "Chatroom_idUser_fkey")
   message   message[]
@@ -91,6 +90,14 @@ model user {
   account       account[]
   chatroom      chatroom[]
   session       session[]
+  role          role?      @relation(fields: [roleId], references: [id])
+  roleId        Int?
+}
+
+model role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique // "admin" ou "user"
+  users user[]
 }
 
 model verificationtoken {
