@@ -3,10 +3,10 @@
 import { Message } from '@/types/message';
 import React, { useRef, useState } from 'react';
 
-import Header from '@/components/front-office/Header';
-import Chatbot, { ChatbotHandle } from "@/components/front-office/Chatbot";
-import History from "@/components/front-office/Historique";
-import FAQPage from "@/components/front-office/FAQPage";
+import Header from '@/components/frontoffice/Header';
+import Chatbot, { ChatbotHandle } from "@/components/frontoffice/Chatbot";
+import History from "@/components/frontoffice/Historique";
+import FAQPage from "@/components/frontoffice/FAQPage";
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
