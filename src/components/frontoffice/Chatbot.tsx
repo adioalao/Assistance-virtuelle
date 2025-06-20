@@ -5,7 +5,7 @@ import { Message } from "@/types/message";
 import MessageList from "./MessageList";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
-import FAQPage, { FAQPageHandle } from "@/components/front-office/FAQPage";
+import FAQPage, { FAQPageHandle } from "@/components/frontoffice/FAQPage";
 
 export interface ChatbotHandle {
   startNewSession: () => void;

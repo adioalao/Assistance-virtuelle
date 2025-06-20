@@ -20,10 +20,10 @@ export async function middleware(req: NextRequest) {
   // Si l'utilisateur va sur la racine /
   if (req.nextUrl.pathname === "/") {
     if (token.role === "admin") {
-      url.pathname = "/back-office";
+      url.pathname = "/backoffice/Dashboard";
       return NextResponse.redirect(url);
     } else if (token.role === "user") {
-      url.pathname = "/front-office";
+      url.pathname = "/frontoffice";
       return NextResponse.redirect(url);
     } else {
       url.pathname = "/unauthorized";

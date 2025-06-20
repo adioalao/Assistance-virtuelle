@@ -19,8 +19,8 @@ export const metadata: Metadata = {
     </html>
   );
 } */
-import { ThemeProvider } from "@/components/back-office/theme-provider"
-import { AuthProvider } from "./front-office/providers";
+import { ThemeProvider } from "@/components/backoffice/theme-provider"
+import { AuthProvider } from "@/app/frontoffice/providers";
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

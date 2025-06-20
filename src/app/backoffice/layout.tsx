@@ -1,15 +1,15 @@
-import { AppSidebar } from "@/components/back-office/app-sidebar"
-import Pathname from "@/components/back-office/custom/pathname"
-import { ModeToggle } from "@/components/back-office/custom/toggleTheme"
+import { AppSidebar } from "@/components/backoffice/app-sidebar"
+import Pathname from "@/components/backoffice/custom/pathname"
+import { ModeToggle } from "@/components/backoffice/custom/toggleTheme"
 import {
 	Breadcrumb,
-} from "@/components/back-office/ui/breadcrumb"
-import { Separator } from "@/components/back-office/ui/separator"
+} from "@/components/backoffice/ui/breadcrumb"
+import { Separator } from "@/components/backoffice/ui/separator"
 import {
 	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
-} from "@/components/back-office/ui/sidebar"
+} from "@/components/backoffice/ui/sidebar"
 
 export default function Page({ children }: { children: React.ReactNode }) {
 	return (

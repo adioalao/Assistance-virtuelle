@@ -17,7 +17,7 @@ export default function LoginPage() {
   // Si l'utilisateur est déjà connecté, redirige-le selon son rôle
   useEffect(() => {
     if (session?.user) {
-      if (session.user.role === 'admin') router.push('/backoffice');
+      if (session.user.role === 'admin') router.push('/backoffice/Dashboard');
       else router.push('/frontoffice');
     }
   }, [session, router]);

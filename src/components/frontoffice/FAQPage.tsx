@@ -7,7 +7,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from "react";
-import MessageList from "@/components/front-office/MessageList";
+import MessageList from "@/components/frontoffice/MessageList";
 import { Message } from "@/types/message";
 
 // Type pour une question

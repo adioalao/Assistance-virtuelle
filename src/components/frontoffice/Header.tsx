@@ -5,8 +5,8 @@ import Image from "next/image"
 import { SquarePen } from 'lucide-react';
 import { DynamicIcon } from 'lucide-react/dynamic';
 //import {  PanelRight } from 'lucide-react';
-import Img from "@/components/front-office/logo.webp"; // Assure-toi que le chemin d'image est correct
-import LogoutButton from "@/components/front-office/LogoutButton";
+import Img from "@/components/frontoffice/logo.webp"; // Assure-toi que le chemin d'image est correct
+import LogoutButton from "@/components/frontoffice/LogoutButton";
 interface HeaderProps {
   onHistoryToggle: () => void;
   onNewChat: () => void;

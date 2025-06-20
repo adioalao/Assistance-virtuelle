@@ -13,7 +13,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/components/back-office/ui/avatar"
+} from "@/components/backoffice/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,13 +22,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/back-office/ui/dropdown-menu"
+} from "@/components/backoffice/ui/dropdown-menu"
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/back-office/ui/sidebar"
+} from "@/components/backoffice/ui/sidebar"
 
 export function NavUser({
   user,

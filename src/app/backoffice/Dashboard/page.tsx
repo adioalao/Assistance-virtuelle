@@ -1,6 +1,6 @@
-import { CardGroup } from "@/components/back-office/custom/cardGroup";
-import { ChartAnsweredQuestionEvolution } from "@/components/back-office/custom/chartAnsweredQuestionEvolution";
-import { ChartStatusRepartition } from '@/components/back-office/custom/chartStatusRepartition';
+import { CardGroup } from "@/components/backoffice/custom/cardGroup";
+import { ChartAnsweredQuestionEvolution } from "@/components/backoffice/custom/chartAnsweredQuestionEvolution";
+import { ChartStatusRepartition } from '@/components/backoffice/custom/chartStatusRepartition';
 
 export default function Dashboard() {
   return (

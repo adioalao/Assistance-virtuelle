@@ -6,7 +6,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/back-office/ui/collapsible"
+} from "@/components/backoffice/ui/collapsible"
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,7 +17,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/components/back-office/ui/sidebar"
+} from "@/components/backoffice/ui/sidebar"
 
 export function NavMain({
   items,
