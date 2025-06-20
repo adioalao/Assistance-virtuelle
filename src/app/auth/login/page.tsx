@@ -3,67 +3,96 @@
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react"; // Facultatif si tu veux une icône animée
 
 export default function LoginPage() {
-  const [email, setEmail] = useState(""); // Modification : utiliser email au lieu de username
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const { data: session } = useSession();
   const router = useRouter();
+  const { data: session, status } = useSession();
 
-  // Si l'utilisateur est déjà connecté, redirige-le vers la page d'accueil
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Si l'utilisateur est déjà connecté, redirige-le selon son rôle
   useEffect(() => {
-    if (session) {
-      router.push("/front-office"); // Redirection vers la page d'accueil si l'utilisateur est connecté
+    if (session?.user) {
+      if (session.user.role === 'admin') router.push('/backoffice');
+      else router.push('/frontoffice');
     }
   }, [session, router]);
 
+  // Si la session est en cours de vérification
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-blue-100">
+        <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
+        <span className="ml-2 text-blue-600 text-lg">Chargement de la session...</span>
+      </div>
+    );
+  }
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-    // Essayer de se connecter avec les informations fournies
     const res = await signIn("credentials", {
       redirect: false,
       email,
       password,
     });
-    console.log("Résultat connexion :", res);
 
     if (res?.error) {
       setError("Email ou mot de passe incorrect");
-    } else {
-      router.push("/");
+      setLoading(false);
     }
+    // Sinon redirection automatique par le useEffect
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-blue-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md space-y-4 w-96"
+        className="bg-white p-8 rounded-lg shadow-md space-y-4 w-full max-w-md"
       >
-        <h1 className="text-2xl font-bold text-center">Connexion</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-600 mb-4">Connexion</h1>
+
         <input
-          type="email" // Modification : changer le type en email
-          placeholder="Email"
-          value={email} // Modification : utiliser email au lieu de username
-          onChange={(e) => setEmail(e.target.value)} // Modification : mettre à jour email
-          className="w-full border p-2 rounded"
+          type="email"
+          placeholder="Adresse email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         />
+
         <input
           type="password"
           placeholder="Mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border p-2 rounded"
+          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required
         />
+
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
         <button
           type="submit"
-          className="w-full items-center rounded-full bg-blue-100 text-sm font-semibold text-blue-800 p-2 rounded hover:bg-blue-200"
+          disabled={loading}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition disabled:opacity-50"
         >
-          Se connecter
+          {loading ? (
+            <div className="flex justify-center items-center gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Connexion...
+            </div>
+          ) : (
+            "Se connecter"
+          )}
         </button>
-        {error && <p className="text-red-500 text-center">{error}</p>} {/* Afficher l'erreur */}
       </form>
     </div>
   );
