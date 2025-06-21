@@ -10,10 +10,23 @@ export async function middleware(req: NextRequest) {
   });
 
   const url = req.nextUrl.clone();
+  const pathname = req.nextUrl.pathname;
 
   // Non connecté : rediriger vers /auth/login
   if (!token) {
     url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
+  }
+
+
+  // 🔐 Règles de protection selon les rôles
+  if (pathname.startsWith("/backoffice") && token.role !== "admin") {
+    url.pathname = "/unauthorized";
+    return NextResponse.redirect(url);
+  }
+
+  if (pathname.startsWith("/frontoffice") && token.role !== "user") {
+    url.pathname = "/unauthorized";
     return NextResponse.redirect(url);
   }
 
