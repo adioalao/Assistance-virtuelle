@@ -1,11 +1,10 @@
-
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
 type QuestionWithChildren = {
   id: number;
   contenu: string;
-  reponses: { contenu: string }[];
+  reponse: { contenu: string } | null;
   children: QuestionWithChildren[];
 };
 
@@ -13,7 +12,7 @@ async function fetchQuestionWithChildren(parentId: number | null = null): Promis
   const questions = await prisma.question.findMany({
     where: { parentId },
     include: {
-      reponses: true,
+      reponse: true,
     },
   });
 
@@ -21,7 +20,7 @@ async function fetchQuestionWithChildren(parentId: number | null = null): Promis
     questions.map(async (q) => ({
       id: q.id,
       contenu: q.contenu,
-      reponses: q.reponses,
+      reponse: q.reponse ? { contenu: q.reponse.contenu } : null,
       children: await fetchQuestionWithChildren(q.id),
     }))
   );

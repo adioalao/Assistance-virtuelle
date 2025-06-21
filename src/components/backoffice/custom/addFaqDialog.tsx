@@ -17,29 +17,25 @@ export function AddFaqDialog({
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState("");
 
-    const handleSave = async () => {
+    const handleAdd = async () => {
         setLoading(true);
         setError("");
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            const res = await fetch("http://localhost:4000/api/faqs", {
+            const res = await fetch("/api/faq/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contenu, reponse, voir: 2 }),
-
+                body: JSON.stringify({ contenu, reponse }),
             });
             if (!res.ok) throw new Error("Erreur lors de l'ajout");
             setContenu("");
             setReponse("");
-            onFaqAdded(); // Demande au parent de rafraîchir la liste
+            onFaqAdded();
             onClose();
-
         } catch (e) {
             setError("Erreur lors de l'ajout de la FAQ");
         } finally {
             setLoading(false);
         }
-
     };
 
     return (
@@ -77,8 +73,8 @@ export function AddFaqDialog({
                         Annuler
                     </Button>
                     <Button
-                        onClick={handleSave}
-                        disabled={!setContenu || !reponse || loading}
+                        onClick={handleAdd}
+                        disabled={!contenu || !reponse || loading}
                     >
                         {loading ? 'Enregistrement...' : 'Enregistrer'}
                     </Button>

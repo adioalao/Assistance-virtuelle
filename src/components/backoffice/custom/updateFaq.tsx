@@ -29,12 +29,12 @@ export function UpdateFaq({
         setError("");
         await new Promise(resolve => setTimeout(resolve, 2000));
         try {
-            const res = await fetch("http://localhost:4000/api/faqs", {
+            const res = await fetch("/api/faq/update", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id_FAQ, contenu, reponse }),
+                body: JSON.stringify({ id: id_FAQ, contenu, reponse }),
             });
-            if (!res.ok) throw new Error("Erreur lors de l'ajout");
+            if (!res.ok) throw new Error("Erreur lors de la mise à jour");
             setContenu("");
             setReponse("");
             onFaqUpdate();

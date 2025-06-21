@@ -41,17 +41,18 @@ import { UpdateFaq } from "@/components/backoffice/custom/updateFaq"
 // You can use a Zod schema here if you want.
 export type Question = {
 	id: number
-	question: string
-	reponse: string
+	contenu: string
+	reponse: { contenu: string } | null
+	children?: Question[]
 }
 
 export const columns: ColumnDef<Question>[] = [
 	{
-		accessorKey: "question",
+		accessorKey: "contenu",
 		header: "Question",
 		cell: ({ row }) => (
 			<div className="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] whitespace-pre-wrap break-words">
-				{row.getValue("question")}
+				{row.original.contenu}
 			</div>
 		),
 	},
@@ -59,7 +60,7 @@ export const columns: ColumnDef<Question>[] = [
 		accessorKey: "reponse",
 		header: "Réponse",
 		cell: ({ row }) => {
-			const reponse = (row.getValue("reponse") as string) ?? ""
+			const reponse = row.original.reponse?.contenu ?? ""
 			const maxLength = 80
 			return (
 				<div className="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] whitespace-pre-wrap break-words">
@@ -84,14 +85,11 @@ export const columns: ColumnDef<Question>[] = [
 				setLoadingDelete(true)
 				setErrorDelete("")
 				try {
-					const res = await fetch(
-						`http://localhost:4000/api/faqs/`,
-						{
-							method: "DELETE",
-							headers: { "Content-Type": "application/json" },
-							body: JSON.stringify({ ids: [question.id] }),
-						}
-					)
+					const res = await fetch("/api/faq/delete", {
+						method: "DELETE",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ ids: [question.id] }),
+					})
 					if (!res.ok) throw new Error("Erreur lors de la suppression")
 					setOpenDeleteAlert(false)
 					window.location.reload() // Simple et efficace pour rafraîchir la liste
@@ -129,7 +127,7 @@ export const columns: ColumnDef<Question>[] = [
 							<AlertDialogHeader>
 								<AlertDialogTitle>Réponse à la question</AlertDialogTitle>
 								<AlertDialogDescription className="max-h-64 overflow-auto text-black whitespace-pre-line">
-									{question.reponse}
+									{question.reponse?.contenu ?? ""}
 								</AlertDialogDescription>
 							</AlertDialogHeader>
 							<AlertDialogFooter>
@@ -167,8 +165,8 @@ export const columns: ColumnDef<Question>[] = [
 						onClose={() => setOpenEdit(false)}
 						onFaqUpdate={() => window.location.reload()}
 						id_FAQ={question.id}
-						initialQuestion={question.question}
-						initialReponse={question.reponse}
+						initialQuestion={question.contenu}
+						initialReponse={question.reponse?.contenu ?? ""}
 					/>
 				</>
 			)

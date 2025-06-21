@@ -24,15 +24,16 @@ model question {
   parentId Int?
   parent   question?  @relation("SubQuestions", fields: [parentId], references: [id])
   children question[] @relation("SubQuestions")
-  reponses reponse[]
+  reponse  reponse?
 
+  // plus de reponses[]
   @@index([parentId], map: "question_parentId_fkey")
 }
 
 model reponse {
   id         Int      @id @default(autoincrement())
   contenu    String
-  questionId Int
+  questionId Int      @unique
   question   question @relation(fields: [questionId], references: [id])
 
   @@index([questionId])

@@ -27,10 +27,10 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 		setLoading(true);
 		setError(false);
 		try {
-			const res = await fetch("http://localhost:4000/api/faqs", { cache: "no-store" });
+			const res = await fetch("/api/faq", { cache: "no-store" });
 			if (!res.ok) throw new Error();
 			let data = await res.json();
-			// Trie par id décroissant (plus récent en premier)
+			// Trie par id décroissant
 			data = data.sort((a: Question, b: Question) => b.id - a.id);
 			setFaqs(data);
 		} catch {
@@ -38,7 +38,6 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 		} finally {
 			setLoading(false);
 		}
-
 	}, []);
 
 	// Table setup
@@ -71,7 +70,7 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 			.map(([id]) => Number(id));
 		if (ids.length === 0) return;
 		try {
-			await fetch("http://localhost:4000/api/faqs/", {
+			await fetch("/api/faq/delete", {
 				method: "DELETE",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ ids }),
@@ -112,11 +111,12 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 			) : (
 				<div>
 					<div className="flex justify-between items-center py-4">
+						{/* Pour la recherche, adapte la colonne : */}
 						<Input
 							placeholder="Recherche de questions . . ."
-							value={(table.getColumn("question")?.getFilterValue() as string) ?? ""}
+							value={(table.getColumn("contenu")?.getFilterValue() as string) ?? ""}
 							onChange={(event) =>
-								table.getColumn("question")?.setFilterValue(event.target.value)
+								table.getColumn("contenu")?.setFilterValue(event.target.value)
 							}
 							className="max-w-sm"
 						/>
