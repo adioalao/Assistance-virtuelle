@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
-import React from "react"
+import React, { useState } from "react"
 
 import { Button } from "@/components/backoffice/ui/button"
 import {
@@ -24,17 +24,6 @@ import {
 	AlertDialogTitle,
 } from "@/components/backoffice/ui/alert-dialog"
 
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/backoffice/ui/dialog"
-import { Label } from "@/components/backoffice/ui/label"
-import { Textarea } from "@/components/backoffice/ui/textarea"
 import { UpdateFaq } from "@/components/backoffice/custom/updateFaq"
 
 // This type is used to define the shape of our data.
@@ -80,6 +69,7 @@ export const columns: ColumnDef<Question>[] = [
 			const [openDeleteAlert, setOpenDeleteAlert] = React.useState(false)
 			const [loadingDelete, setLoadingDelete] = React.useState(false)
 			const [errorDelete, setErrorDelete] = React.useState("")
+			const [isChanged, setIsChanged] = useState(false)
 
 			const handleDelete = async () => {
 				setLoadingDelete(true)
@@ -91,12 +81,13 @@ export const columns: ColumnDef<Question>[] = [
 						body: JSON.stringify({ ids: [question.id] }),
 					})
 					if (!res.ok) throw new Error("Erreur lors de la suppression")
+					setIsChanged(true)
 					setOpenDeleteAlert(false)
-					window.location.reload() // Simple et efficace pour rafraîchir la liste
 				} catch (e) {
 					setErrorDelete("Erreur lors de la suppression")
 				} finally {
 					setLoadingDelete(false)
+					setIsChanged(false)
 				}
 			}
 

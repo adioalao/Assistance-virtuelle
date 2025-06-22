@@ -1,9 +1,12 @@
+
+// app/backoffice/layout.tsx
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/pages/api/auth/[...nextauth]"
+import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/backoffice/app-sidebar"
 import Pathname from "@/components/backoffice/custom/pathname"
 import { ModeToggle } from "@/components/backoffice/custom/toggleTheme"
-import {
-	Breadcrumb,
-} from "@/components/backoffice/ui/breadcrumb"
+import { Breadcrumb } from "@/components/backoffice/ui/breadcrumb"
 import { Separator } from "@/components/backoffice/ui/separator"
 import {
 	SidebarInset,
@@ -11,10 +14,23 @@ import {
 	SidebarTrigger,
 } from "@/components/backoffice/ui/sidebar"
 
-export default function Page({ children }: { children: React.ReactNode }) {
+export default async function Layout({ children }: { children: React.ReactNode }) {
+	const session = await getServerSession(authOptions)
+
+	if (!session || session.user.role !== "admin") {
+		redirect("/unauthorized")
+	}
+
 	return (
 		<SidebarProvider>
-			<AppSidebar />
+			{/* 👇 On passe le vrai user ici */}
+			<AppSidebar
+				user={{
+					name: session.user.name ?? "Admin",
+					email: session.user.email ?? "admin@example.com",
+					avatar: "/avatars/shadcn.jpg", // tu peux le récupérer depuis ta BDD si tu l’as
+				}}
+			/>
 			<SidebarInset>
 				<header className="flex justify-between h-16 shrink-0 items-center gap-2">
 					<div className="flex items-center gap-2 px-4">
@@ -25,7 +41,6 @@ export default function Page({ children }: { children: React.ReactNode }) {
 						/>
 						<Breadcrumb>
 							<Pathname />
-
 						</Breadcrumb>
 					</div>
 					<div className="mx-4">
@@ -39,4 +54,3 @@ export default function Page({ children }: { children: React.ReactNode }) {
 		</SidebarProvider>
 	)
 }
-

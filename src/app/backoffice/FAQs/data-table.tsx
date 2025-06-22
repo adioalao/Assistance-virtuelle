@@ -23,7 +23,7 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 	const [selectionMode, setSelectionMode] = React.useState(false);
 	const [deleting, setDeleting] = React.useState(false);
 	// Rafraîchir la liste après ajout
-	const fetchFaqs = React.useCallback(async () => {
+	const fetchFaqs = async () => {
 		setLoading(true);
 		setError(false);
 		try {
@@ -38,7 +38,7 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 		} finally {
 			setLoading(false);
 		}
-	}, []);
+	}
 
 	// Table setup
 	const table = useReactTable({
@@ -111,7 +111,6 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 			) : (
 				<div>
 					<div className="flex justify-between items-center py-4">
-						{/* Pour la recherche, adapte la colonne : */}
 						<Input
 							placeholder="Recherche de questions . . ."
 							value={(table.getColumn("contenu")?.getFilterValue() as string) ?? ""}
