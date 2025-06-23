@@ -18,16 +18,21 @@ export function UpdateFaq({
     id_FAQ: number;
     initialQuestion?: string;
     initialReponse?: string;
-} & React.ComponentProps<"div">) { // <-- accepte toutes les props classiques d'un div
+} & React.ComponentProps<"div">) {
     const [contenu, setContenu] = React.useState(initialQuestion);
     const [reponse, setReponse] = React.useState(initialReponse);
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState("");
 
+    // Synchronise les valeurs initiales si le dialog s'ouvre sur une autre question
+    React.useEffect(() => {
+        setContenu(initialQuestion);
+        setReponse(initialReponse);
+    }, [initialQuestion, initialReponse, open]);
+
     const handleSave = async () => {
         setLoading(true);
         setError("");
-        await new Promise(resolve => setTimeout(resolve, 2000));
         try {
             const res = await fetch("/api/faq/update", {
                 method: "PUT",
@@ -35,9 +40,7 @@ export function UpdateFaq({
                 body: JSON.stringify({ id: id_FAQ, contenu, reponse }),
             });
             if (!res.ok) throw new Error("Erreur lors de la mise à jour");
-            setContenu("");
-            setReponse("");
-            onFaqUpdate();
+            onFaqUpdate(); // Notifie le parent (DataTable) de rafraîchir la liste
             onClose();
         } catch (e) {
             setError("Erreur lors de la mise à jour de la FAQ");
@@ -45,7 +48,6 @@ export function UpdateFaq({
             setLoading(false);
         }
     };
-
 
     return (
         <Dialog open={open} onOpenChange={onClose} {...props}>

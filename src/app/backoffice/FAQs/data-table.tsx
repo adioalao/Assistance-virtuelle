@@ -6,15 +6,14 @@ import { Button } from "@/components/backoffice/ui/button";
 import { Input } from "@/components/backoffice/ui/input";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/backoffice/ui/dropdown-menu";
 import { AddFaqDialog } from "@/components/backoffice/custom/addFaqDialog";
-import { Question, columns } from "./columns";
+import { Question, getColumns } from "./columns";
 
 type DataTableProps = {
 	initialFaqs: Question[];
-	columns: typeof columns;
 	initialError?: boolean;
 };
 
-export function DataTable({ initialFaqs, columns, initialError = false }: DataTableProps) {
+export function DataTable({ initialFaqs, initialError = false }: DataTableProps) {
 	const [faqs, setFaqs] = React.useState<Question[]>(initialFaqs);
 	const [loading, setLoading] = React.useState(false);
 	const [error, setError] = React.useState(initialError);
@@ -22,7 +21,9 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 	const [rowSelection, setRowSelection] = React.useState<{ [key: string]: boolean }>({});
 	const [selectionMode, setSelectionMode] = React.useState(false);
 	const [deleting, setDeleting] = React.useState(false);
-	// Rafraîchir la liste après ajout
+	console.log(faqs);
+
+
 	const fetchFaqs = async () => {
 		setLoading(true);
 		setError(false);
@@ -30,7 +31,6 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 			const res = await fetch("/api/faq", { cache: "no-store" });
 			if (!res.ok) throw new Error();
 			let data = await res.json();
-			// Trie par id décroissant
 			data = data.sort((a: Question, b: Question) => b.id - a.id);
 			setFaqs(data);
 		} catch {
@@ -38,7 +38,13 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 		} finally {
 			setLoading(false);
 		}
-	}
+	};
+
+	const handleChange = React.useCallback(() => {
+		fetchFaqs();
+	}, []);
+
+	const columns = React.useMemo(() => getColumns(handleChange), [handleChange]);
 
 	// Table setup
 	const table = useReactTable({
@@ -84,6 +90,7 @@ export function DataTable({ initialFaqs, columns, initialError = false }: DataTa
 			setDeleting(false);
 		}
 	};
+
 
 	return (
 		<div>
