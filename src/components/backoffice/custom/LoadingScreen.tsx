@@ -1,18 +1,20 @@
-'use client';
+"use client"
 
-import { Loader2 } from 'lucide-react'; // icône de chargement
-import React from 'react';
-
-export default function LoadingScreen() {
+export default function BounceLoader() {
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-100 via-white to-blue-50">
-            <Loader2 className="h-16 w-16 text-blue-600 animate-spin mb-4" />
-            <h1 className="text-2xl font-semibold text-gray-800 animate-pulse">
-                Chargement en cours...
-            </h1>
-            <p className="text-gray-500 mt-2">
-                Veuillez patienter un instant.
-            </p>
+        <div className="flex items-center justify-center min-h-screen bg-white dark:bg-black">
+            <div className="flex space-x-4">
+                {["#EF4444", "#3B82F6", "#10B981"].map((color, i) => (
+                    <span
+                        key={i}
+                        style={{
+                            backgroundColor: color,
+                            animationDelay: `${i * 0.2}s`,
+                        }}
+                        className="w-6 h-6 rounded-full animate-bounce"
+                    />
+                ))}
+            </div>
         </div>
-    );
+    )
 }

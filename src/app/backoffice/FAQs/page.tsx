@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Question } from "./columns";
+import BounceLoader from "@/components/backoffice/custom/LoadingScreen";
 
 export default function FAQs() {
 	const [faqs, setFaqs] = useState<Question[]>([]);
@@ -28,7 +29,7 @@ export default function FAQs() {
 		fetchFaqs();
 	}, []);
 
-	if (loading) return <p>Chargement...</p>;
+	if (loading) return <><BounceLoader /></>;
 	if (error) return <p>Erreur de chargement, <button onClick={fetchFaqs}>Réessayer</button></p>;
 
 	return (
