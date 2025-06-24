@@ -23,28 +23,28 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onQuestionClick }) 
                 <div className="rounded-lg bg-white px-4 py-3 text-sm text-gray-900 shadow">
                   {message.text}
 
-                   {/* Affichage des enfants si présents */}
-              {Array.isArray(message.children) && message.children.length > 0 && (
-  <div className="mt-2 flex flex-col gap-2">
-    {message.children.map((child, index) => {
-      if (!child || typeof child.id === "undefined" || !child.contenu) return null;
-      return (
-        <button
-          key={child.id}
-          className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 hover:bg-gray-200"
-          onClick={() => onQuestionClick(child)}
-        >
-          {child.contenu}
-        </button>
-      );
-    })}
-  </div>
-)}
+                  {/* Affichage des enfants si présents */}
+                  {Array.isArray(message.children) && message.children.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-2">
+                      {message.children.map((child, index) => {
+                        if (!child || typeof child.id === "undefined" || !child.contenu) return null;
+                        return (
+                          <button
+                            key={child.id}
+                            className="rounded-md bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-800 hover:bg-gray-200"
+                            onClick={() => onQuestionClick(child)}
+                          >
+                            {child.contenu}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
 
                 </div>
               </div>
 
-             
+
             </div>
           ) : (
             <div key={message.id} className="flex items-start justify-end space-x-3">

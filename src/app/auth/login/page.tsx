@@ -55,16 +55,16 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 px-4">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md space-y-4 w-full max-w-md"
+        className="bg-white p-12 rounded-xl shadow-lg space-y-6 w-full max-w-2xl"
       >
-        <h1 className="text-3xl font-bold text-center text-blue-600 mb-4">Connexion</h1>
+        <h1 className="text-4xl font-bold text-center text-blue-600 mb-6">Connexion</h1>
 
         <input
           type="email"
           placeholder="Adresse email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded text-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
 
@@ -73,20 +73,20 @@ export default function LoginPage() {
           placeholder="Mot de passe"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded text-xl px-6 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
           required
         />
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && <p className="text-red-500 text-base text-center">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition disabled:opacity-50"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-lg py-4 rounded transition disabled:opacity-50"
         >
           {loading ? (
-            <div className="flex justify-center items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
+            <div className="flex justify-center items-center gap-2 text-xl">
+              <Loader2 className="w-6 h-6 animate-spin" />
               Connexion...
             </div>
           ) : (
