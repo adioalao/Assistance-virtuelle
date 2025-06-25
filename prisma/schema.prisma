@@ -7,39 +7,140 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model message {
+// Enums pour la gestion des statuts et sources
+enum QuestionStatus {
+  provisional
+  approved
+  rejected
+}
+
+enum QuestionSource {
+  user
+  ai
+  admin
+}
+
+enum AuthorType {
+  user
+  ai
+  system
+  admin
+}
+
+enum TicketStatus {
+  open
+  processed
+  pending
+}
+
+// Utilisateur de la plateforme
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique(map: "User_email_key")
+  password      String?
+  emailVerified DateTime?
+  image         String?
+
+  accounts           OAuthAccount[]
+  chatSessions       ChatSession[]
+  sessions           UserSession[]
+  tickets            Ticket[]
+  role               Role?          @relation(fields: [roleId], references: [id])
+  roleId             Int?
+  submittedQuestions Question[]
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
+
+// Session de discussion (chat)
+model ChatSession {
+  id        Int       @id @default(autoincrement())
+  title     String?
+  status    String
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], map: "Chatroom_idUser_fkey")
+  messages  Message[]
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// Message dans une session de chat
+model Message {
+  id            Int         @id @default(autoincrement())
+  title         String?
+  content       String
+  authorType    AuthorType  @default(user) // qui a envoyé ce message
+  chatSessionId Int
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], map: "Message_idChatroom_fkey")
+  createdAt     DateTime    @default(now())
+
+  // Pour générer une FAQ depuis un message
+  linkedQuestions Question[] @relation("MessageToQuestion")
+
+  @@index([chatSessionId])
+}
+
+// Groupe de FAQ (regroupement thématique)
+model FaqGroup {
+  id        Int        @id @default(autoincrement())
+  title     String
+  createdAt DateTime   @default(now())
+  questions Question[]
+}
+
+// Question posée dans une FAQ ou discussion
+model Question {
+  id             Int            @id @default(autoincrement())
+  content        String
+  isFaq          Boolean        @default(false)
+  createdByAdmin Boolean        @default(false)
+  status         QuestionStatus @default(provisional)
+  source         QuestionSource @default(user)
+  orderInChat    Int            @default(0)
+  createdAt      DateTime       @default(now())
+
+  userId Int?
+  user   User? @relation(fields: [userId], references: [id])
+
+  sourceMessageId Int?
+  message         Message? @relation("MessageToQuestion", fields: [sourceMessageId], references: [id])
+
+  faqGroupId Int?
+  faqGroup   FaqGroup? @relation(fields: [faqGroupId], references: [id])
+
+  answer Answer?
+
+  @@index([createdAt])
+}
+
+// Réponse associée à une question
+model Answer {
   id         Int      @id @default(autoincrement())
-  titre      String?
   content    String
-  idChatroom Int
-  createdAt  DateTime @default(now())
-  chatroom   chatroom @relation(fields: [idChatroom], references: [id], map: "Message_idChatroom_fkey")
-
-  @@index([idChatroom], map: "Message_idChatroom_fkey")
-}
-
-model question {
-  id       Int        @id @default(autoincrement())
-  contenu  String
-  parentId Int?
-  parent   question?  @relation("SubQuestions", fields: [parentId], references: [id])
-  children question[] @relation("SubQuestions")
-  reponse  reponse?
-
-  // plus de reponses[]
-  @@index([parentId], map: "question_parentId_fkey")
-}
-
-model reponse {
-  id         Int      @id @default(autoincrement())
-  contenu    String
   questionId Int      @unique
-  question   question @relation(fields: [questionId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id])
 
   @@index([questionId])
 }
 
-model account {
+// Ticket de support manuel
+model Ticket {
+  id        Int          @id @default(autoincrement())
+  content   String
+  status    TicketStatus @default(open)
+  userId    Int
+  user      User         @relation(fields: [userId], references: [id])
+  createdAt DateTime     @default(now())
+}
+
+// Comptes OAuth (Google, GitHub, etc.)
+model OAuthAccount {
   id                Int     @id @default(autoincrement())
   userId            Int
   type              String
@@ -52,59 +153,61 @@ model account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              user    @relation(fields: [userId], references: [id], map: "Account_userId_fkey")
+
+  user User @relation(fields: [userId], references: [id], map: "Account_userId_fkey")
 
   @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
   @@index([userId], map: "Account_userId_fkey")
 }
 
-model chatroom {
-  id     Int     @id @default(autoincrement())
-  titre  String?
-  status String
-  idUser Int
-
-  createdAt DateTime  @default(now())
-  user      user      @relation(fields: [idUser], references: [id], map: "Chatroom_idUser_fkey")
-  message   message[]
-
-  @@index([idUser], map: "Chatroom_idUser_fkey")
-}
-
-model session {
+// Sessions d'utilisateur
+model UserSession {
   id           Int      @id @default(autoincrement())
   sessionToken String   @unique(map: "Session_sessionToken_key")
   userId       Int
   expires      DateTime
-  user         user     @relation(fields: [userId], references: [id], map: "Session_userId_fkey")
+  user         User     @relation(fields: [userId], references: [id], map: "Session_userId_fkey")
 
   @@index([userId], map: "Session_userId_fkey")
 }
 
-model user {
-  id            Int        @id @default(autoincrement())
-  name          String?
-  email         String?    @unique(map: "User_email_key")
-  password      String?
-  emailVerified DateTime?
-  image         String?
-  account       account[]
-  chatroom      chatroom[]
-  session       session[]
-  role          role?      @relation(fields: [roleId], references: [id])
-  roleId        Int?
-}
-
-model role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique // "admin" ou "user"
-  users user[]
-}
-
-model verificationtoken {
+// Jetons de vérification (auth)
+model VerificationToken {
   identifier String
   token      String   @unique(map: "VerificationToken_token_key")
   expires    DateTime
 
   @@unique([identifier, token], map: "VerificationToken_identifier_token_key")
 }
+
+/**
+ * 1. Utilisateur (User)
+ * Représente un usager de la plateforme.
+ * Il peut avoir des sessions, poser des questions, ouvrir des tickets.
+ * 2. Session de discussion (ChatSession)
+ * Chaque session représente une discussion type chat entre l'utilisateur et l'IA (ou autre).
+ * Elle contient des messages (Message).
+ * 3. Messages (Message)
+ * Représente chaque phrase ou texte envoyé dans une conversation.
+ * Peut être lié à une ou plusieurs questions (transformables en FAQ).
+ * 4. FAQ (FaqGroup)
+ * Groupe de questions/réponses officielles, validées par un admin.
+ * Une FAQ peut regrouper plusieurs questions.
+ * 5. Questions (Question)
+ * Contient le contenu de la question.
+ * Peut provenir d’un message, d’un utilisateur, ou d’un admin.
+ * Peut être utilisée comme FAQ si isFaq = true.
+ * Elle peut être validée, en attente ou refusée (status).
+ * Elle peut être la source d’un ticket si l'utilisateur n’est pas satisfait.
+ * 6. Réponse (Answer)
+ * Contient une seule réponse pour une question.
+ * Lien 1-1 avec une question.
+ * 7. Tickets (Ticket)
+ * Créés quand une réponse ne satisfait pas l'utilisateur.
+ * Attribués à un utilisateur.
+ * Permettent le suivi par un agent humain.
+ * 8. OAuth / Session / Vérification
+ * Gère les connexions sécurisées.
+ * Intègre OAuth comme Google, GitHub.
+ * Gère les sessions actives et la vérification.
+ */

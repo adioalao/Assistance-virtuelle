@@ -26,7 +26,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
       {/* Zone de texte */}
       <textarea
         ref={textareaRef}
-        rows={4}
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={(e) => {
@@ -35,7 +34,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
             handleSendMessage();
           }
         }}
-        className="flex-grow resize-none bg-transparent text-sm focus:outline-none placeholder-gray-500 py-2 text-gray-900"
+        className="flex-grow resize-none bg-transparent focus:outline-none placeholder-gray-500 py-2 text-gray-900 text-xl"
         placeholder="Écrivez votre message ici..."
         style={{
           maxHeight: "160px",
