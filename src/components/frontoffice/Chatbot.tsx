@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Message } from "@/types/message";
-import MessageList from "./MessageList";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
 import FAQPage, { FAQPageHandle } from "@/components/frontoffice/FAQPage";
@@ -80,7 +79,7 @@ const Chatbot = forwardRef<ChatbotHandle>((props, ref) => {
           handleSendMessage={() => handleSendMessage(inputValue)}
           textareaRef={textareaRef}
           onSend={handleSendMessage}
-          
+
           onFileUpload={(fileUrl, fileType) => {
             const now = new Date().toISOString();
             const userMessage: Message = {

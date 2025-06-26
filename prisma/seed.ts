@@ -1,41 +1,58 @@
-import { PrismaClient } from '@prisma/client';
+const { PrismaClient } = require('@prisma/client');
+const bcrypt = require('bcryptjs');
+
+const prisma = new PrismaClient();
 
 async function main() {
-  const prisma = new PrismaClient();
+  // Création des rôles si non existants
+  const [adminRole, userRole] = await Promise.all([
+    prisma.role.upsert({
+      where: { name: 'admin' },
+      update: {},
+      create: { name: 'admin' },
+    }),
+    prisma.role.upsert({
+      where: { name: 'user' },
+      update: {},
+      create: { name: 'user' },
+    }),
+  ]);
 
-  try {
-       const user = await prisma.user.findUnique({
-      where: { email: "alice.dupont@example.com" }
-    });
-          if (!user) {
-      throw new Error('Utilisateur non trouvé');
-    }
+  // Hash des mots de passe
+  const alicePassword = await bcrypt.hash('alice', 10);
+  const bobPassword = await bcrypt.hash('bob', 10);
 
-    console.log(`🔄 Utilisateur trouvé avec ID: ${user.id}`);
+  // Création des utilisateurs
+  await prisma.user.upsert({
+    where: { email: 'alice.@admin.com' },
+    update: {},
+    create: {
+      name: 'Alice Dupont',
+      email: 'alice.@admin.com',
+      password: alicePassword,
+      roleId: adminRole.id,
+    },
+  });
 
-    const chatroom = await prisma.chatroom.create({
-      data: {
-        titre: "Discussion d'exemple",
-        idUser: Number(user.id ),
-        status: "actif"
-      }
-    });
+  await prisma.user.upsert({
+    where: { email: 'bob.@user.com' },
+    update: {},
+    create: {
+      name: 'Bob Martin',
+      email: 'bob.@user.com',
+      password: bobPassword,
+      roleId: userRole.id,
+    },
+  });
 
-    await prisma.message.create({
-      data: {
-        content: "Bonjour, ceci est un message de test.",
-       // role: "user",
-        idChatroom: chatroom.id
-      }
-    });
-
-    console.log("Seed terminé avec succès !");
-  } catch (error) {
-    console.error("Erreur lors du seed:", error);
-    process.exit(1);
-  } finally {
-    await prisma.$disconnect();
-  }
+  console.log('✅ Utilisateurs créés avec succès !');
 }
 
-main();
+main()
+  .catch((e) => {
+    console.error('Erreur lors du seed:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

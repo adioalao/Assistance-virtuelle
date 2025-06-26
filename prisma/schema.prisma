@@ -7,17 +7,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enums pour la gestion des statuts et sources
 enum QuestionStatus {
   provisional
   approved
   rejected
-}
-
-enum QuestionSource {
-  user
-  ai
-  admin
 }
 
 enum AuthorType {
@@ -33,7 +26,12 @@ enum TicketStatus {
   pending
 }
 
-// Utilisateur de la plateforme
+enum RoleName {
+  user
+  admin
+  superAdmin
+}
+
 model User {
   id            Int       @id @default(autoincrement())
   name          String?
@@ -42,26 +40,25 @@ model User {
   emailVerified DateTime?
   image         String?
 
-  accounts           OAuthAccount[]
-  chatSessions       ChatSession[]
-  sessions           UserSession[]
-  tickets            Ticket[]
-  role               Role?          @relation(fields: [roleId], references: [id])
-  roleId             Int?
-  submittedQuestions Question[]
+  accounts     OAuthAccount[]
+  chatSessions ChatSession[]
+  sessions     UserSession[]
+  tickets      Ticket[]
+  role         Role?          @relation(fields: [roleId], references: [id])
+  roleId       Int?
+
+  Question Question[]
 }
 
 model Role {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
+  id    Int      @id @default(autoincrement())
+  name  RoleName @unique
   users User[]
 }
 
-// Session de discussion (chat)
 model ChatSession {
   id        Int       @id @default(autoincrement())
   title     String?
-  status    String
   userId    Int
   user      User      @relation(fields: [userId], references: [id], map: "Chatroom_idUser_fkey")
   messages  Message[]
@@ -70,56 +67,46 @@ model ChatSession {
   @@index([userId])
 }
 
-// Message dans une session de chat
 model Message {
   id            Int         @id @default(autoincrement())
-  title         String?
   content       String
-  authorType    AuthorType  @default(user) // qui a envoyé ce message
+  authorType    AuthorType  @default(user)
   chatSessionId Int
   chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], map: "Message_idChatroom_fkey")
   createdAt     DateTime    @default(now())
-
-  // Pour générer une FAQ depuis un message
-  linkedQuestions Question[] @relation("MessageToQuestion")
+  Question      Question[]
 
   @@index([chatSessionId])
 }
 
-// Groupe de FAQ (regroupement thématique)
 model FaqGroup {
   id        Int        @id @default(autoincrement())
   title     String
   createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
   questions Question[]
 }
 
-// Question posée dans une FAQ ou discussion
 model Question {
-  id             Int            @id @default(autoincrement())
-  content        String
-  isFaq          Boolean        @default(false)
-  createdByAdmin Boolean        @default(false)
-  status         QuestionStatus @default(provisional)
-  source         QuestionSource @default(user)
-  orderInChat    Int            @default(0)
-  createdAt      DateTime       @default(now())
+  id          Int            @id @default(autoincrement())
+  content     String
+  orderInChat Int            @default(0)
+  createdAt   DateTime       @default(now())
+  status      QuestionStatus @default(provisional)
 
   userId Int?
   user   User? @relation(fields: [userId], references: [id])
 
-  sourceMessageId Int?
-  message         Message? @relation("MessageToQuestion", fields: [sourceMessageId], references: [id])
-
   faqGroupId Int?
   faqGroup   FaqGroup? @relation(fields: [faqGroupId], references: [id])
 
-  answer Answer?
+  answer    Answer?
+  messageId Int?
+  message   Message? @relation(fields: [messageId], references: [id])
 
   @@index([createdAt])
 }
 
-// Réponse associée à une question
 model Answer {
   id         Int      @id @default(autoincrement())
   content    String
@@ -129,7 +116,6 @@ model Answer {
   @@index([questionId])
 }
 
-// Ticket de support manuel
 model Ticket {
   id        Int          @id @default(autoincrement())
   content   String
@@ -139,7 +125,6 @@ model Ticket {
   createdAt DateTime     @default(now())
 }
 
-// Comptes OAuth (Google, GitHub, etc.)
 model OAuthAccount {
   id                Int     @id @default(autoincrement())
   userId            Int
@@ -160,7 +145,6 @@ model OAuthAccount {
   @@index([userId], map: "Account_userId_fkey")
 }
 
-// Sessions d'utilisateur
 model UserSession {
   id           Int      @id @default(autoincrement())
   sessionToken String   @unique(map: "Session_sessionToken_key")
@@ -171,7 +155,6 @@ model UserSession {
   @@index([userId], map: "Session_userId_fkey")
 }
 
-// Jetons de vérification (auth)
 model VerificationToken {
   identifier String
   token      String   @unique(map: "VerificationToken_token_key")
@@ -195,10 +178,7 @@ model VerificationToken {
  * Une FAQ peut regrouper plusieurs questions.
  * 5. Questions (Question)
  * Contient le contenu de la question.
- * Peut provenir d’un message, d’un utilisateur, ou d’un admin.
- * Peut être utilisée comme FAQ si isFaq = true.
- * Elle peut être validée, en attente ou refusée (status).
- * Elle peut être la source d’un ticket si l'utilisateur n’est pas satisfait.
+ * Une question est inséré par un admin
  * 6. Réponse (Answer)
  * Contient une seule réponse pour une question.
  * Lien 1-1 avec une question.

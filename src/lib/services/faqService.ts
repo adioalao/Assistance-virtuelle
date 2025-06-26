@@ -5,66 +5,111 @@ const prisma = new PrismaClient()
 
 export const faqService = {
 	async getAll() {
-		return prisma.question.findMany({
-			where: { isFaq: true },
-			include: { reponse: true, faq: true },
-			orderBy: { createdAt: 'desc' },
-		})
-	},
-
-	async getGroupedByFaq() {
-		const groups = await prisma.faq.findMany({
+		return await prisma.faqGroup.findMany({
 			include: {
 				questions: {
-					where: { isFaq: true },
-					include: { reponse: true },
+					include: { answer: true },
+					orderBy: { orderInChat: 'asc' },
+					where: { status: 'approved' }
+				}
+			},
+			orderBy: { createdAt: 'desc' }
+		})
+	},
+
+	async getFaqById(id: number) {
+		return await prisma.faqGroup.findUnique({
+			where: { id },
+			include: {
+				questions: {
+					include: { answer: true },
 					orderBy: { createdAt: 'desc' },
+					where: { status: 'approved' }
 				},
 			},
-			orderBy: { createdAt: 'desc' },
 		})
-		return groups
 	},
 
-	async addFaq(contenu: string, reponse: string, faqId?: number, createdByAdmin = true) {
-		return prisma.question.create({
+	async getFaqByTitle(title: string) {
+		return await prisma.faqGroup.findMany({
+			where: { title },
+			select: { title: true }
+		})
+	},
+
+	async addFaq(title: string) {
+		return prisma.faqGroup.create({
 			data: {
-				contenu,
-				isFaq: true,
-				createdByAdmin,
-				faqId,
-				reponse: { create: { contenu: reponse } },
-			},
-			include: { reponse: true, faq: true },
+				title
+			}
 		})
 	},
 
-	async updateFaq(id: number, newContenu: string, newReponse: string, newFaqId?: number) {
-		await prisma.reponse.update({
-			where: { questionId: id },
-			data: { contenu: newReponse },
-		})
-
-		return prisma.question.update({
+	async updateFaq(id: number, title: string) {
+		return prisma.faqGroup.update({
 			where: { id },
-			data: { contenu: newContenu, faqId: newFaqId },
-			include: { reponse: true, faq: true },
+			data: {
+				title
+			}
 		})
 	},
 
-	async deleteFaq(id: number) {
-		await prisma.reponse.delete({ where: { questionId: id } })
-		return prisma.question.delete({ where: { id } })
+
+	async deleteFaqWithQuestion(id: number) {
+		// 1. Récupérer les IDs des questions liées à la FAQ
+		const questions = await prisma.question.findMany({
+			where: { faqGroupId: id },
+			select: { id: true },
+		})
+
+		const questionIds = questions.map(q => q.id)
+
+		// 2. Supprimer les réponses liées à ces questions
+		if (questionIds.length > 0) {
+			await prisma.answer.deleteMany({
+				where: { questionId: { in: questionIds } },
+			})
+		}
+
+		// 3. Supprimer les questions de la FAQ
+		await prisma.question.deleteMany({
+			where: { faqGroupId: id },
+		})
+
+		// 4. Supprimer la FAQ
+		return prisma.faqGroup.delete({
+			where: { id },
+		})
+	},
+	async deleteFaqWithOutQuestion(id: number) {
+		//  1. Détachées questions liées à la FAQ
+		const questions = await prisma.question.findMany({
+			where: { faqGroupId: id },
+			select: { id: true },
+		})
+
+		const questionIds = questions.map(q => q.id)
+
+		// 2. Supprimer les questions de la FAQ
+		await prisma.question.updateMany({
+			where: { faqGroupId: id },
+			data: { faqGroupId: null }
+		})
+
+		// 3. Supprimer la FAQ
+		return prisma.faqGroup.delete({
+			where: { id },
+		})
 	},
 
 	async fuzzySearch(message: string) {
 		const faqs = await prisma.question.findMany({
-			where: { isFaq: true },
-			include: { reponse: true, faq: true },
+			where: { status: 'approved' }, // seulement questions validées
+			include: { answer: true, faqGroup: true },
 		})
 
 		const fuse = new Fuse(faqs, {
-			keys: ['contenu', 'faq.titre'],
+			keys: ['content', 'faqGroup.title'],
 			threshold: 0.3,
 		})
 
@@ -75,5 +120,5 @@ export const faqService = {
 		}
 
 		return null
-	}
+	},
 }

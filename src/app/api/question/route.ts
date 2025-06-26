@@ -1,0 +1,30 @@
+import { questionService } from "@/lib/services/questionService";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET() {
+   const questions = await questionService.getAll();
+   return NextResponse.json(questions);
+}
+
+export async function POST(req: NextRequest) {
+   const { content, answerContent, userId, faqGroupId, messageId, status } = await req.json();
+
+   if (!content || content.trim().length === 0) {
+      return NextResponse.json({ error: "Contenu requis" }, { status: 400 });
+   }
+
+   try {
+      const created = await questionService.createQuestionWithAnswer({
+         content,
+         answerContent,
+         userId,
+         faqGroupId,
+         messageId,
+         status,
+      });
+
+      return NextResponse.json(created, { status: 201 });
+   } catch (e) {
+      return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
+   }
+}

@@ -32,7 +32,6 @@ export default function LoginPage() {
     );
   }
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -53,6 +52,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 px-4">
+
       <form
         onSubmit={handleSubmit}
         className="bg-white p-12 rounded-xl shadow-lg space-y-6 w-full max-w-2xl"
