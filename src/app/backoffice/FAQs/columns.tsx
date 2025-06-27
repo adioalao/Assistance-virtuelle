@@ -4,14 +4,14 @@ import { ColumnDef } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
 import React, { useState } from "react"
 
-import { Button } from "@/components/backoffice/ui/button"
+import { Button } from "@/components/ui/button"
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuTrigger,
-} from "@/components/backoffice/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu"
 
 import {
 	AlertDialog,
@@ -22,9 +22,9 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/components/backoffice/ui/alert-dialog"
+} from "@/components/ui/alert-dialog"
 
-import { UpdateFaq } from "@/components/backoffice/custom/updateFaq"
+import { UpdateFaq } from "@/components/custom/backoffice/updateFaq"
 
 export type Question = {
 	id: number

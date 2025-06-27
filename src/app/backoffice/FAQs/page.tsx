@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./data-table";
 import { Question } from "./columns";
-import BounceLoader from "@/components/backoffice/custom/LoadingScreen";
+import BounceLoader from "@/components/custom/backoffice/LoadingScreen";
 
 export default function FAQs() {
 	const [faqs, setFaqs] = useState<Question[]>([]);

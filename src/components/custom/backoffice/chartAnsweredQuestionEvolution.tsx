@@ -9,7 +9,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-} from "@/components/backoffice/ui/card"
+} from "@/components/ui/card"
 import {
     ChartConfig,
     ChartContainer,
@@ -17,14 +17,14 @@ import {
     ChartLegendContent,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/backoffice/ui/chart"
+} from "@/components/ui/chart"
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/backoffice/ui/select"
+} from "@/components/ui/select"
 const chartData = [
     { date: "2024-04-01", desktop: 222, mobile: 150 },
     { date: "2024-04-02", desktop: 97, mobile: 180 },

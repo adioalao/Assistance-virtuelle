@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/backoffice/ui/button'; // si tu utilises shadcn/ui, sinon remplace
+import { Button } from '@/components/ui/button'; // si tu utilises shadcn/ui, sinon remplace
 import { ShieldAlert } from 'lucide-react'; // icône d’alerte
 
 export default function UnauthorizedPage() {

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     </html>
   );
 } */
-import { ThemeProvider } from "@/components/backoffice/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider"
 import { AuthProvider } from "@/app/frontoffice/providers";
 
 

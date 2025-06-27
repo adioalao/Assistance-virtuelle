@@ -1,5 +1,5 @@
 
-import LoadingScreen from "@/components/backoffice/custom/LoadingScreen";
+import LoadingScreen from "@/components/custom/backoffice/LoadingScreen";
 
 export default function Loading() {
     return <LoadingScreen />;

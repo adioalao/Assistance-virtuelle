@@ -1,16 +1,16 @@
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/pages/api/auth/[...nextauth]"
 import { redirect } from "next/navigation"
-import { AppSidebar } from "@/components/backoffice/app-sidebar"
-import Pathname from "@/components/backoffice/custom/pathname"
-import { ModeToggle } from "@/components/backoffice/custom/toggleTheme"
-import { Breadcrumb } from "@/components/backoffice/ui/breadcrumb"
-import { Separator } from "@/components/backoffice/ui/separator"
+import { AppSidebar } from "@/components/app-sidebar"
+import Pathname from "@/components/custom/backoffice/pathname"
+import { ModeToggle } from "@/components/custom/backoffice/toggleTheme"
+import { Breadcrumb } from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
 import {
 	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
-} from "@/components/backoffice/ui/sidebar"
+} from "@/components/ui/sidebar"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 	const session = await getServerSession(authOptions)

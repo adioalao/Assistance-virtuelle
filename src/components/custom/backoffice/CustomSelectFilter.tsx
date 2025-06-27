@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/backoffice/ui/select"
+} from "@/components/ui/select"
 
 interface CustomSelectFilterProps {
   placeholder?: string
