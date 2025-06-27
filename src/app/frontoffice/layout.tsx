@@ -37,9 +37,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
                      orientation="vertical"
                      className="mr-2 data-[orientation=vertical]:h-4"
                   />
-                  <Breadcrumb>
-                     <Pathname />
-                  </Breadcrumb>
                </div>
                <div className="mx-4">
                   <ModeToggle />
