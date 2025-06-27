@@ -8,9 +8,8 @@ Ce projet utilise [Prisma](https://www.prisma.io/) comme ORM et [pnpm](https://p
 
 1. **Installe les dépendances :**
 
-```bash
+````bash
 pnpm install
 
-```
-
-pnpm exec prisma generate
+```pnpm exec prisma generate
+````
