@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
 
 				const user = await prisma.user.findUnique({
 					where: { email: credentials.email },
-					include: { role: true }, // Chargement du  rôle
+					include: { role: true },
 				});
 
 				if (!user || !user.password) return null;
@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
 					id: user.id.toString(),
 					name: user.name,
 					email: user.email,
-					role: user.role?.name, // 👈 Inclure le nom du rôle
+					role: user.role?.name ?? "", // Ensure role is always a string
 				};
 			},
 		}),
