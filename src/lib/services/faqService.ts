@@ -37,6 +37,30 @@ export const faqService = {
 		})
 	},
 
+	async getFirstQuestionsFromAllFaqs(limit = 10) {
+		const groups = await prisma.faqGroup.findMany({
+			include: {
+				questions: {
+					where: { status: 'approved' },
+					orderBy: { orderInChat: 'asc' },
+					take: 1,
+					include: { answer: true },
+				}
+			},
+			orderBy: { createdAt: 'desc' },
+			take: limit,
+		});
+
+		// On ne garde que les groupes avec au moins une question
+		return groups
+			.filter(group => group.questions.length > 0)
+			.map(group => ({
+				faqId: group.id,
+				faqTitle: group.title,
+				...group.questions[0], // On retourne la première question avec sa réponse
+			}));
+	},
+
 	async addFaq(title: string) {
 		return prisma.faqGroup.create({
 			data: {

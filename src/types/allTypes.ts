@@ -28,9 +28,9 @@ export type Message = {
     timestamp: string;
     fileUrl?: string;
     fileType?: string;
-    children?: {
-        id: number;
-        content: string;
-        answer: { contenu: string };
-    }[];
+    /*  children?: {
+         id: number;
+         content: string;
+         answer: { contenu: string };
+     }[]; */
 };

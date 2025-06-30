@@ -8,16 +8,9 @@ import React, {
   useImperativeHandle,
 } from "react";
 import MessageList from "./MessageList";
-import { Message } from "@/types/message";
+import { Message } from "@/types/allTypes";
+import { Question } from "@/types/allTypes";
 
-// Type pour une question
-type Question = {
-  id: number;
-  contenu: string;
-  children?: Question[]; // Utiliser "?" pour indiquer que c'est optionnel
-  reponses?: { contenu: string }[];
-
-};
 
 export interface FAQPageHandle {
   startNewSession: () => void;
@@ -111,7 +104,7 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
     setCurrentQuestion(question);
 
     const botText =
-      question.reponses?.[0]?.contenu ||
+      question.answer.content ||
       "Désolé, aucune réponse disponible pour cette question.";
 
     const now = new Date().toISOString();
@@ -119,7 +112,7 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
     const userMessage: Message = {
       id: Date.now(),
       sender: "user",
-      text: question.contenu,
+      text: question.content,
       timestamp: now,
     };
 
@@ -128,7 +121,6 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
       sender: "bot",
       text: botText,
       timestamp: now,
-      children: question.children || [],
     };
 
     setMessages((prev) => [...prev, userMessage, botMessage]);
@@ -157,7 +149,7 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
             {questionsToDisplay.map((q) => (
               <button
                 key={q.id}
-                className="rounded-full border border-solid border-black-300 bg-white px-3 py-3 text-base text-gray-800 hover:bg-gray-200"
+                className="rounded-sm border border-solid border-black-300 bg-white px-3 py-3 text-base text-gray-800 hover:bg-gray-200"
                 onClick={() => handleQuestionClick(q)}
               >
                 {q.contenu}

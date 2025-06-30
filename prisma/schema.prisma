@@ -88,21 +88,36 @@ model FaqGroup {
 }
 
 model Question {
-  id          Int            @id @default(autoincrement())
-  content     String
-  orderInChat Int            @default(0)
-  createdAt   DateTime       @default(now())
-  status      QuestionStatus @default(provisional)
+  id      Int    @id @default(autoincrement())
+  content String // Texte de la question
 
+  // 🧭 Hiérarchie : une question peut avoir une question parente (ex : sous-question)
+  parentId Int?
+  parent   Question?  @relation("SubQuestions", fields: [parentId], references: [id])
+  children Question[] @relation("SubQuestions") // Toutes les sous-questions liées
+
+  // 🔢 Ordre des sous-questions (dans une FAQ par exemple)
+  order Int @default(0)
+
+  // 📦 Statut de la question : provisoire, approuvée, rejetée
+  status QuestionStatus @default(provisional)
+
+  // 🔗 Lien vers l’utilisateur qui a posé la question
   userId Int?
   user   User? @relation(fields: [userId], references: [id])
 
+  // 🔗 Lien vers la FAQ à laquelle cette question appartient
   faqGroupId Int?
   faqGroup   FaqGroup? @relation(fields: [faqGroupId], references: [id])
 
-  answer    Answer?
+  // 🔗 Réponse unique à cette question
+  answer Answer?
+
+  // 🔗 Lien vers un message (discussion chat)
   messageId Int?
   message   Message? @relation(fields: [messageId], references: [id])
+
+  createdAt DateTime @default(now())
 
   @@index([createdAt])
 }
@@ -164,30 +179,50 @@ model VerificationToken {
 }
 
 /**
- * 1. Utilisateur (User)
- * Représente un usager de la plateforme.
- * Il peut avoir des sessions, poser des questions, ouvrir des tickets.
- * 2. Session de discussion (ChatSession)
- * Chaque session représente une discussion type chat entre l'utilisateur et l'IA (ou autre).
- * Elle contient des messages (Message).
- * 3. Messages (Message)
- * Représente chaque phrase ou texte envoyé dans une conversation.
- * Peut être lié à une ou plusieurs questions (transformables en FAQ).
- * 4. FAQ (FaqGroup)
- * Groupe de questions/réponses officielles, validées par un admin.
- * Une FAQ peut regrouper plusieurs questions.
- * 5. Questions (Question)
- * Contient le contenu de la question.
- * Une question est inséré par un admin
- * 6. Réponse (Answer)
- * Contient une seule réponse pour une question.
- * Lien 1-1 avec une question.
- * 7. Tickets (Ticket)
- * Créés quand une réponse ne satisfait pas l'utilisateur.
- * Attribués à un utilisateur.
- * Permettent le suivi par un agent humain.
- * 8. OAuth / Session / Vérification
- * Gère les connexions sécurisées.
- * Intègre OAuth comme Google, GitHub.
- * Gère les sessions actives et la vérification.
+ * 1- 🧠User
+ * Représente un utilisateur de la plateforme
+ * Relation :
+ * Question[]: les questions posées par l’utilisateur
+ * ChatSession[]: les sessions de chat initiées
+ * Ticket[]: les tickets de support envoyés
+ * Role: rôle attribué à l’utilisateur (user, admin, etc.)
+ * 2- 🔐 Role
+ * Représente le rôle d’un utilisateur
+ * name peut être user, admin, superAdmin
+ * Relation :
+ * users: tous les utilisateurs ayant ce rôle
+ * 3- 💬 ChatSession
+ * Une session de discussion (type ChatGPT)
+ * Relation :
+ * user: utilisateur propriétaire
+ * messages: tous les messages de cette session
+ * 4- 📥 Message
+ * Un message individuel dans une session de chat
+ * Relation :
+ * chatSession: session dans laquelle ce message a été posté
+ * Question[]: questions associées à ce message (ex: si une FAQ a été cliquée)
+ * 5- 📚 FaqGroup
+ * Groupe de questions (FAQ)
+ * title: titre général (ex: "Création de compte")
+ * questions: toutes les questions liées
+ * 6- ❓ Question
+ * Question posée par un utilisateur ou dans une FAQ
+ * Relations :
+ * faqGroup: FAQ à laquelle appartient cette question
+ * user: utilisateur qui a posé la question (facultatif)
+ * answer: réponse à cette question (1 seule réponse)
+ * message: message de chat auquel est associée cette question (si elle provient du chat)
+ * parent: question parente (si c’est une sous-question)
+ * children: sous-questions
+ * 7- 💡 Answer
+ * Réponse à une question
+ * Un seul Answer par Question
+ * Relation :
+ * question: la question liée à cette réponse
+ * 8- 🎟️ Ticket
+ * Demande envoyée par un utilisateur au support
+ * Relation :
+ * user: émetteur du ticket
+ * 9- 🔐 OAuthAccount, UserSession, VerificationToken
+ * Composants d’authentification (authentification tierce, sessions, tokens de vérification)
  */

@@ -3,22 +3,25 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
    const id = parseInt(params.id);
-   const question = await questionService.getById(id);
-   if (!question) {
+   const questionTree = await questionService.getTreeById(id);
+   if (!questionTree) {
       return NextResponse.json({ error: "Question introuvable" }, { status: 404 });
    }
-   return NextResponse.json(question);
+   return NextResponse.json(questionTree);
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
    const id = parseInt(params.id);
-   const { content, status, answerContent } = await req.json();
+   const { content, status, answerContent, faqGroupId, parentId, order } = await req.json();
 
    try {
       const updated = await questionService.updateQuestionAndAnswer(id, {
          content,
          status,
          answerContent,
+         faqGroupId,
+         parentId,
+         order,
       });
 
       return NextResponse.json(updated);
