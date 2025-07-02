@@ -7,6 +7,7 @@ import Header from '@/components/custom/frontoffice/Header';
 import Chatbot, { ChatbotHandle } from "@/components/custom/frontoffice/Chatbot";
 import History from "@/components/custom/frontoffice/Historique";
 import FAQPage from "@/components/custom/frontoffice/FAQPage";
+import ChatInterface from '@/components/custom/frontoffice/ChatInterface';
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -35,40 +36,21 @@ export default function Home() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col relative transition-all duration-300">
-      {/* En-tête */}
-      <Header
-        onHistoryToggle={toggleHistory}
-        onNewChat={startNewChat}
-        showHistory={showHistory}
-      />
+    <div className="w-full flex flex-col items-center overflow-hidden">
+      <div className="w-[60%] max-w-full">
+        {/* <Chatbot
+          ref={chatbotRef}
+          setNewChatroom={setNewChatroom}
+          messages={messages}
+          setMessages={setMessages}
+        /> */}
 
-      {/* Contenu principal */}
-      <div className="flex flex-1 transition-all duration-300">
-        {/* Historique qui se développe */}
-        <div
-          className={`bg-gray-50 shadow-md h-full overflow-auto transition-all duration-300 ${showHistory ? 'w-[20%] p-4' : 'w-0 p-0'
-            }`}
-        >
-          {showHistory && <History newChatroom={newChatroom} messages={messages} setMessages={setMessages} />}
-        </div>
-
-        {/* Contenu du chat (Chatbot) */}
-        <div
-          className={`flex justify-center items-center transition-all duration-300 ${showHistory ? 'w-[80%]' : 'w-full'
-            }`}
-          id="chatbox"
-        >
-          <div className="w-[60%]">
-            {/* <Chatbot setNewChatroom={setNewChatroom} messages={messages} setMessages={setMessages} /> */}
-            <Chatbot
-              ref={chatbotRef}
-              setNewChatroom={setNewChatroom}
-              messages={messages}
-              setMessages={setMessages}
-            />
-          </div>
-        </div>
+        <ChatInterface
+          ref={chatbotRef}
+          setNewChatroom={setNewChatroom}
+          messages={messages}
+          setMessages={setMessages}
+        />
       </div>
     </div>
   );

@@ -22,18 +22,18 @@ import { useSession } from "next-auth/react";
 //   const [chatrooms, setChatRooms]= useState<ChatroomType[]>([]);
 
 //   useEffect(() => { 
-    
+
 //     const fetchHistory = async () => {
 //       try {
-   
+
 //         const res = await fetch('/api/history');
 //         const data = await res.json();
 
-//         if (data.error) {
+//         if (data.error) {/home/ahouansou/Documents/Programmation/web/Port/Assistance-virtuelle
 //           console.error(data.error);
 //         } else {
 //           setChatRooms(data.chatroom); // Mettre à jour l'état des messages
-          
+
 //         }
 //       } catch (error) {
 //         console.error('Erreur lors de la récupération de l\'historique', error);
@@ -172,7 +172,7 @@ const History: React.FC<HistoryProps> = ({ newChatroom, setMessages }) => {
         }
       });
 
-      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+      // if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
       const data = await res.json();
       const formattedMessages = data?.chatroomWithMessage?.message?.map((message: Message) => ({

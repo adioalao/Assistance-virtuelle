@@ -15,9 +15,13 @@ export async function POST(req: NextRequest) {
 
       const allFaqs = await faqService.getAll();
 
-      // Extraire les questions principales (celles avec orderInChat = 0 ou 1ere question de chaque FAQ)
+      // Extraire la première question (order === 0 ou la première question triée) de chaque FAQ
       const mainQuestions = allFaqs
-         .map((faq) => faq.questions.find((q) => q.orderInChat === 0 || q.orderInChat === faq.questions[0]?.orderInChat))
+         .map((faq) => {
+            if (!faq.questions || faq.questions.length === 0) return null;
+            // Cherche la question avec order === 0, sinon prend la première
+            return faq.questions.find((q) => q.order === 0) || faq.questions[0];
+         })
          .filter(Boolean);
 
       const fuse = new Fuse(mainQuestions, {

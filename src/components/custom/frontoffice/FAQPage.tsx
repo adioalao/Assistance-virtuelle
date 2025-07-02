@@ -8,7 +8,7 @@ import React, {
   useImperativeHandle,
 } from "react";
 import MessageList from "./MessageList";
-import { Message } from "@/types/allTypes";
+import { ChildQuestion, Message } from "@/types/allTypes";
 import { Question } from "@/types/allTypes";
 
 
@@ -35,12 +35,13 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [session, setSession] = useState<number>(Date.now());
   const [showInitialQuestions, setShowInitialQuestions] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Récupération des questions via l'API
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const res = await fetch("/api/faq");
+        const res = await fetch("/api/faq/first-questions");
         if (!res.ok) {
           throw new Error(`Erreur ${res.status}: ${res.statusText}`);
         }
@@ -100,7 +101,48 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
     startNewSession,
   }));
 
-  const handleQuestionClick = (question: Question) => {
+  const handleQuestionClick = async (child: ChildQuestion) => {
+    try {
+      // On suppose que le back peut récupérer une question complète par son id
+      const res = await fetch(`/api/question/${child.id}`);
+      if (!res.ok) throw new Error("Erreur lors de la récupération de la question");
+
+      const fullQuestion: Question = await res.json();
+      console.log("fullQuestion", JSON.stringify(fullQuestion, null, 2));
+      console.log(".....", fullQuestion.answer.content);
+
+      const now = new Date().toISOString();
+
+      const userMessage: Message = {
+        id: Date.now(),
+        sender: "user",
+        text: fullQuestion.content,
+        timestamp: now,
+      };
+
+
+      const botMessage: Message = {
+        id: Date.now() + 1,
+        sender: "bot",
+        text: fullQuestion.answer.content || "Aucune réponse disponible.",
+        timestamp: now,
+        children: fullQuestion.children?.map((child) => ({
+          id: child.id,
+          content: child.content,
+        })),
+      };
+
+      setMessages((prev) => [...prev, userMessage, botMessage]);
+
+      // Si plus de sous-questions : passer en mode libre
+      if (!fullQuestion.children || fullQuestion.children.length === 0) {
+        setModeLibre(true);
+      }
+    } catch (err) {
+      console.error("Erreur dans handleQuestionClick:", err);
+    }
+  };
+  /* const handleQuestionClick = (question: Question) => {
     setCurrentQuestion(question);
 
     const botText =
@@ -121,6 +163,10 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
       sender: "bot",
       text: botText,
       timestamp: now,
+      children: question.children?.map((child) => ({
+        id: child.id,
+        contenu: child.content,
+      })),
     };
 
     setMessages((prev) => [...prev, userMessage, botMessage]);
@@ -129,7 +175,7 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
     if (!question.children || question.children.length === 0) {
       setModeLibre(true);
     }
-  };
+  }; */
 
   const questionsToDisplay = currentQuestion?.children ?? (!currentQuestion ? questions : []);
 
@@ -150,9 +196,9 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
               <button
                 key={q.id}
                 className="rounded-sm border border-solid border-black-300 bg-white px-3 py-3 text-base text-gray-800 hover:bg-gray-200"
-                onClick={() => handleQuestionClick(q)}
+                onClick={() => handleQuestionClick({ id: q.id, content: q.content })}
               >
-                {q.contenu}
+                {q.content}
               </button>
             ))}
           </div>

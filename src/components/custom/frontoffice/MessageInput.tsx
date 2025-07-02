@@ -23,7 +23,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
   onFileUpload,
 }) => {
   return (
-    <div className="mb-5 pr-2 flex items-center gap-2 border-solid border-gray-200 border rounded-sm bg-white">
+    <div className="mb-3 pr-2 flex items-center gap-2 border-solid border-gray-200 border rounded-sm bg-white">
       {/* Zone de texte */}
       <textarea
         ref={textareaRef}

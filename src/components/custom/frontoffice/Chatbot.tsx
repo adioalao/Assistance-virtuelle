@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Message } from "@/types/message";
+import { Message } from "@/types/allTypes";
 import MessageList from "./MessageList";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
@@ -56,7 +56,7 @@ const Chatbot = forwardRef<ChatbotHandle>((props, ref) => {
   }));
 
   return (
-    <div className="h-screen flex flex-col bg-white w-full">
+    <div className="h-[89vh] flex flex-col bg-white w-full">
       {messages.length === 0 && (
         <div className="p-0 mt-40">
           <WelcomeMessage text="Bienvenue ! Comment puis-je vous aider ?" />

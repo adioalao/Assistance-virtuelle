@@ -3,7 +3,7 @@ import { faqService } from '@/lib/services/faqService';
 
 export async function GET() {
    try {
-      const questions = await faqService.getFirstQuestionsFromAllFaqs(10);
+      const questions = await faqService.getFirstQuestionsFromAllFaqs(5);
       if (!questions || questions.length === 0) {
          return NextResponse.json({ message: 'Aucune question trouvée' }, { status: 404 });
       }

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 type QuestionTree = {
 	id: number;
 	content: string;
-	answer: { contenu: string };
+	answer: { content: string };
 	order: number;
 	children: QuestionTree[];
 };
@@ -33,7 +33,7 @@ async function getQuestionTree(id: number): Promise<QuestionTree | null> {
 	return {
 		id: question.id,
 		content: question.content,
-		answer: question.answer ? { contenu: question.answer.content } : { contenu: '' },
+		answer: question.answer ? { content: question.answer.content } : { content: '' },
 		order: question.order,
 		children: (await Promise.all(children.map(async (child) => await getQuestionTree(child.id)))).filter((c): c is QuestionTree => c !== null),
 	};
@@ -147,7 +147,8 @@ export const faqService = {
 
 		const fuse = new Fuse(faqs, {
 			keys: ['content', 'faqGroup.title'],
-			threshold: 0.3,
+			threshold: 0.35,
+			ignoreLocation: true
 		});
 
 		const result = fuse.search(message);
