@@ -1,4 +1,4 @@
-
+/* 
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -14,8 +14,6 @@ const ChatPage = () => {
    const [messages, setMessages] = useState<Message[]>([]);
    const [inputValue, setInputValue] = useState<string>("");
    const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-   console.log(id);
 
    useEffect(() => {
       const fetchQuestion = async () => {
@@ -102,6 +100,127 @@ const ChatPage = () => {
       } catch (err) {
          console.error("Erreur sous-question:", err);
       }
+   };
+
+   return (
+      <div className="h-screen md:h-[89vh] flex flex-col w-full max-w-full overflow-hidden px-4 sm:px-6 md:px-8 lg:px-12 xl:px-56">
+         <div className="flex-1 overflow-y-auto">
+            <MessageList messages={messages} onQuestionClick={handleQuestionClick} />
+         </div>
+
+         <div className="px-2 sm:px-4 pb-2">
+            <MessageInput
+               inputValue={inputValue}
+               setInputValue={setInputValue}
+               handleSendMessage={() => handleSendMessage(inputValue)}
+               textareaRef={textareaRef}
+               onSend={handleSendMessage}
+               onFileUpload={(fileUrl, fileType) => {
+                  const now = new Date().toISOString();
+                  const userMessage: Message = {
+                     id: Date.now(),
+                     sender: "user",
+                     text: "Fichier envoyé",
+                     fileUrl,
+                     fileType,
+                     timestamp: now,
+                  };
+                  setMessages((prev) => [...prev, userMessage]);
+               }}
+            />
+         </div>
+      </div>
+   );
+};
+
+export default ChatPage; */
+
+"use client";
+
+import React, { useEffect, useState, useRef } from "react";
+import { useParams } from "next/navigation";
+import { Message } from "@/types/allTypes";
+import MessageList from "@/components/custom/frontoffice/MessageList";
+import MessageInput from "@/components/custom/frontoffice/MessageInput";
+
+const ChatPage = () => {
+   const params = useParams();
+   const id = params?.id; // id de la session
+   const [messages, setMessages] = useState<Message[]>([]);
+   const [inputValue, setInputValue] = useState<string>("");
+   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+   // ✅ Charger la vraie session (ChatSession + Messages)
+   useEffect(() => {
+      const fetchSession = async () => {
+         try {
+            const res = await fetch(`/api/discussion/${id}`);
+            if (!res.ok) throw new Error("Erreur lors du chargement de la session");
+
+            const data = await res.json();
+
+            const loadedMessages: Message[] = data.session.messages.map((msg: any) => ({
+               id: msg.id,
+               sender: msg.authorType === "user" ? "user" : "bot",
+               text: msg.content,
+               timestamp: msg.createdAt,
+               children: msg.question?.children?.map((child: any) => ({
+                  id: child.id,
+                  content: child.content,
+               })) ?? [],
+            }));
+
+            setMessages(loadedMessages);
+         } catch (err) {
+            console.error("Erreur chargement session:", err);
+         }
+      };
+
+      if (id) fetchSession();
+   }, [id]);
+
+   // ✅ Envoie local (non persistant pour l'instant)
+   const handleSendMessage = (userText: string) => {
+      if (!userText.trim()) return;
+
+      const now = new Date().toISOString();
+      const newMessages: Message[] = [
+         {
+            id: Date.now(),
+            sender: "user",
+            text: userText,
+            timestamp: now,
+         },
+         {
+            id: Date.now() + 1,
+            sender: "bot",
+            text: "Voici une réponse simulée par l'IA.",
+            timestamp: now,
+         },
+      ];
+
+      setMessages((prev) => [...prev, ...newMessages]);
+      setInputValue("");
+   };
+
+   // Pour suggestions futures si tu veux réutiliser
+   const handleQuestionClick = async (child: { id: number; content: string }) => {
+      const now = new Date().toISOString();
+      setMessages((prev) => [
+         ...prev,
+         {
+            id: Date.now(),
+            sender: "user",
+            text: child.content,
+            timestamp: now,
+         },
+         {
+            id: Date.now() + 1,
+            sender: "bot",
+            text: "Réponse simulée à la suggestion.",
+            timestamp: now,
+         },
+      ]);
    };
 
    return (

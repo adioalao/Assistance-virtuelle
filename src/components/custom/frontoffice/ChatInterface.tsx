@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, Re
 import { Message, Question } from "@/types/allTypes";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export interface ChatbotHandle {
   startNewSession: () => void;
@@ -17,6 +17,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -34,7 +35,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
         }
 
         const data = await res.json();
-        console.log("Données reçues du backend :", JSON.stringify(data, null, 2));
+        // console.log("Données reçues du backend :", JSON.stringify(data, null, 2));
 
         if (Array.isArray(data)) {
           setQuestions(data);
@@ -74,6 +75,40 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
     setInputValue("");
   };
 
+  const handleClick = async (question: Question) => {
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/discussion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: question.content, // ou question.faqTitle si besoin
+          messages: [
+            {
+              content: question.content,
+              authorType: "user",
+            },
+            {
+              content: question.answer?.content ?? "Aucune réponse disponible",
+              authorType: "ai",
+            },
+          ],
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error || "Échec de la création");
+
+      // Redirection vers la session de discussion
+      router.push(`/frontoffice/chat/${data.sessionId}`);
+    } catch (error) {
+      console.error("Erreur lors de la création de la session :", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="h-[89vh] flex flex-col bg-white w-full max-w-full overflow-hidden">
       {/* Header avec message de bienvenue */}
@@ -86,14 +121,14 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
         <div className="flex-1">
           <div className="flex flex-wrap gap-2 mt-4 md:mt-20 justify-center">
             {questions.map((q) => (
-              <Link href={`frontoffice/chat/${q.id}`} key={q.id}>
-
-                <button
-                  className="rounded-sm border border-solid border-gray-300 bg-white px-3 py-3 text-sm md:text-base text-gray-800 hover:bg-gray-200 w-full sm:w-auto"
-                >
-                  {q.content}
-                </button>
-              </Link>
+              <button
+                key={q.id}
+                disabled={loading}
+                className="rounded-sm border border-solid border-gray-300 bg-white px-3 py-3 text-sm md:text-base text-gray-800 hover:bg-gray-200 w-full sm:w-auto"
+                onClick={() => handleClick(q)}
+              >
+                {q.content}
+              </button>
             ))}
           </div>
         </div>

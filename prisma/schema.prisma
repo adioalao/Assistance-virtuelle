@@ -74,6 +74,7 @@ model Message {
   chatSessionId Int
   chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], map: "Message_idChatroom_fkey")
   createdAt     DateTime    @default(now())
+  // Question      Question[]
   Question      Question[]
 
   @@index([chatSessionId])
