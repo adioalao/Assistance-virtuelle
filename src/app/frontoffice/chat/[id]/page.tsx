@@ -11,41 +11,10 @@ const ChatPage = () => {
    const id = params?.id;
    const [messages, setMessages] = useState<Message[]>([]);
    const [inputValue, setInputValue] = useState<string>("");
+   const [isEmptySession, setIsEmptySession] = useState<boolean>(false);
    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-   // ✅ Charger la session existante (avec message et potentielle question liée)
-/*    useEffect(() => {
-      const fetchSession = async () => {
-         try {
-            const res = await fetch(`/api/discussion/${id}`);
-            if (!res.ok) throw new Error("Erreur lors du chargement de la session");
-
-            const data = await res.json();
-            const sessionMessages = data.session.messages;
-
-            const loadedMessages: Message[] = sessionMessages.map((msg: any) => ({
-               id: msg.id,
-               sender: msg.authorType === "user" ? "user" : "ai",
-               text: msg.content,
-               timestamp: msg.createdAt,
-               children:
-                  msg.question?.children?.map((child: any) => ({
-                     id: child.id,
-                     content: child.content,
-                  })) ?? [],
-            }));
-
-            setMessages(loadedMessages);
-            console.log(data.session);
-
-         } catch (err) {
-            console.error("Erreur chargement session:", err);
-         }
-      };
-
-      if (id) fetchSession();
-   }, [id]) */;
-
+   //  Charger la session existante (avec message et potentielle question liée)
    useEffect(() => {
       const fetchSessionAndQuestions = async () => {
          try {

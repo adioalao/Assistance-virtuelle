@@ -155,7 +155,7 @@ export function AppSidebar({ user, ...props }: {
             id: item.id,
             name: item.name,
             url: item.url,
-            icon: HistoryIcon, // ou null si pas besoin d'icône
+            icon: HistoryIcon,
           }))}
         />
         {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
