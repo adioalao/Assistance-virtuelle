@@ -45,7 +45,6 @@ export const questionService = {
             answer: true,
             faqGroup: true,
             user: true,
-            message: true,
             parent: true,
             children: true,
          },
@@ -95,7 +94,6 @@ export const questionService = {
             status: data.status || 'provisional',
             userId: data.userId,
             faqGroupId: data.faqGroupId,
-            messageId: data.messageId,
             parentId: data.parentId,
             order: data.order ?? 0,
             answer: data.answerContent

@@ -67,19 +67,6 @@ model ChatSession {
   @@index([userId])
 }
 
-model Message {
-  id            Int         @id @default(autoincrement())
-  content       String
-  authorType    AuthorType  @default(user)
-  chatSessionId Int
-  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], map: "Message_idChatroom_fkey")
-  createdAt     DateTime    @default(now())
-  // Question      Question[]
-  Question      Question[]
-
-  @@index([chatSessionId])
-}
-
 model FaqGroup {
   id        Int        @id @default(autoincrement())
   title     String
@@ -114,11 +101,8 @@ model Question {
   // 🔗 Réponse unique à cette question
   answer Answer?
 
-  // 🔗 Lien vers un message (discussion chat)
-  messageId Int?
-  message   Message? @relation(fields: [messageId], references: [id])
-
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
+  Message   Message[]
 
   @@index([createdAt])
 }
@@ -171,6 +155,20 @@ model UserSession {
   @@index([userId], map: "Session_userId_fkey")
 }
 
+model Message {
+  id            Int         @id @default(autoincrement())
+  content       String
+  authorType    AuthorType  @default(user)
+  chatSessionId Int
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], map: "Message_idChatroom_fkey")
+  createdAt     DateTime    @default(now())
+  questionId    Int? // ✅ clé étrangère vers Question (optionnelle)
+  question      Question?   @relation(fields: [questionId], references: [id])
+
+  @@index([chatSessionId])
+  @@index([questionId])
+}
+
 model VerificationToken {
   identifier String
   token      String   @unique(map: "VerificationToken_token_key")
@@ -201,7 +199,7 @@ model VerificationToken {
  * Un message individuel dans une session de chat
  * Relation :
  * chatSession: session dans laquelle ce message a été posté
- * Question[]: questions associées à ce message (ex: si une FAQ a été cliquée)
+ * Question: question associée à ce message (ex: si une FAQ a été cliquée)
  * 5- 📚 FaqGroup
  * Groupe de questions (FAQ)
  * title: titre général (ex: "Création de compte")

@@ -98,6 +98,8 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       });
 
       const data = await res.json();
+      console.log(res.json, res.ok);
+
 
       if (!res.ok) throw new Error(data.error || "Échec de la création");
 

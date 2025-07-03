@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]"; // 🔁 adapte le chemin si besoin
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { discussionService } from "@/lib/services/discussionService";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
    try {
@@ -16,11 +19,25 @@ export async function POST(req: NextRequest) {
          return NextResponse.json({ error: "Messages manquants ou invalides" }, { status: 400 });
       }
 
-      const result = await discussionService.createDiscussion(session.user.email, messages, title);
+      // Récupérer l'utilisateur par email pour obtenir son id
+      const user = await prisma.user.findUnique({
+         where: { email: session.user.email },
+         select: { id: true }
+      });
 
-      return NextResponse.json({ success: true, ...result });
+      if (!user) {
+         return NextResponse.json({ error: "Utilisateur introuvable" }, { status: 404 });
+      }
+
+      const result = await discussionService.createDiscussion(
+         user.id,
+         title,
+         messages
+      );
+
+      return NextResponse.json({ success: true, sessionId: result.id });
    } catch (error: any) {
-      console.error("Erreur POST /api/discussions:", error);
+      console.error("Erreur POST /api/discussion:");
       return NextResponse.json({ error: error.message || "Erreur interne" }, { status: 500 });
    }
 }

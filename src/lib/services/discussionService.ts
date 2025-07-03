@@ -3,60 +3,50 @@ import { PrismaClient, AuthorType } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const discussionService = {
-   async createDiscussion(userEmail: string, messages: { content: string; authorType?: AuthorType; createdAt?: string }[], title?: string) {
-      const user = await prisma.user.findUnique({
-         where: { email: userEmail },
-      });
-
-      if (!user) {
-         throw new Error("Utilisateur introuvable");
+   async createDiscussion(
+      userId: number,
+      title: string,
+      messages: { content: string; authorType: AuthorType; questionId?: number }[]
+   ) {
+      if (!userId || !title || !Array.isArray(messages) || messages.length === 0) {
+         throw new Error("Paramètres invalides pour la création de la discussion.");
       }
 
-      // Création de la session
-      const session = await prisma.chatSession.create({
+      for (const message of messages) {
+         if (!message.content || !message.authorType) {
+            throw new Error("Chaque message doit avoir un contenu et un auteur.");
+         }
+      }
+
+      return prisma.chatSession.create({
          data: {
-            title: title ?? messages[0]?.content?.slice(0, 30),
-            userId: user.id,
+            title,
+            userId,
+            messages: {
+               create: messages.map((m) => ({
+                  content: m.content,
+                  authorType: m.authorType,
+                  ...(m.questionId ? { question: { connect: { id: m.questionId } } } : {}),
+               })),
+            },
          },
       });
-
-      // Création des messages liés à cette session
-      const created = await prisma.message.createMany({
-         data: messages.map((msg) => ({
-            content: msg.content,
-            authorType: msg.authorType ?? "user",
-            chatSessionId: session.id,
-            createdAt: msg.createdAt ? new Date(msg.createdAt) : new Date(),
-         })),
-      });
-
-      return {
-         sessionId: session.id,
-         messagesCreated: created.count,
-      };
    },
-   async getDiscussionById(sessionId: number, userEmail: string) {
-      const user = await prisma.user.findUnique({
-         where: { email: userEmail },
-         select: { id: true },
-      });
 
-      if (!user) throw new Error("Utilisateur non trouvé");
+   async getSessionById(id: number) {
+      if (!id || typeof id !== "number") {
+         throw new Error("Identifiant de session invalide.");
+      }
 
-      const session = await prisma.chatSession.findUnique({
-         where: {
-            id: sessionId,
-            userId: user.id,
-         },
+      return prisma.chatSession.findUnique({
+         where: { id },
          include: {
             messages: {
                orderBy: { createdAt: "asc" },
             },
+            user: true
+
          },
       });
-
-      if (!session) throw new Error("Session introuvable ou accès non autorisé");
-
-      return session;
    },
 };

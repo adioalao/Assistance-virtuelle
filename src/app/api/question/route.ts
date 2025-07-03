@@ -8,7 +8,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-   const { content, answerContent, userId, faqGroupId, messageId, status, parentId, order } = await req.json();
+   const { content, answerContent, userId, faqGroupId, status, parentId, order } = await req.json();
 
    if (!content || content.trim().length === 0) {
       return NextResponse.json({ error: "Contenu requis" }, { status: 400 });
@@ -20,7 +20,6 @@ export async function POST(req: NextRequest) {
          answerContent,
          userId,
          faqGroupId,
-         messageId,
          status,
          parentId,
          order,
