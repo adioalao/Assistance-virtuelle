@@ -1,3 +1,7 @@
+/*
+ C'est le composant carger de l'affichage du contenu de la page de suggestiion des faqs
+*/
+
 "use client";
 
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, RefObject } from "react";
@@ -66,7 +70,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       },
       {
         id: Date.now() + 1,
-        sender: "bot",
+        sender: "ai",
         text: "Voici la réponse générée par l'IA (simulée ici).",
         timestamp: now,
       },
@@ -79,38 +83,89 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/discussion", {
+      // Étape 1 — Vérifie si une session existe déjà
+      const checkRes = await fetch("/api/discussion/find-existing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ questionId: question.id })
+      });
+
+      const checkData = await checkRes.json();
+
+      if (checkData.exists && checkData.sessionId) {
+        // ✅ Redirection vers l'existante
+        router.push(`/frontoffice/chat/${checkData.sessionId}`);
+        return;
+      }
+
+      // Étape 2 — Crée une nouvelle discussion
+      const res = await fetch("/api/discussions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: question.content, // ou question.faqTitle si besoin
+          title: question.content,
           messages: [
             {
               content: question.content,
               authorType: "user",
+              questionId: question.id,
             },
             {
               content: question.answer?.content ?? "Aucune réponse disponible",
               authorType: "ai",
+              questionId: question.id,
             },
           ],
         }),
       });
 
       const data = await res.json();
-      console.log(res.json, res.ok);
-
 
       if (!res.ok) throw new Error(data.error || "Échec de la création");
 
-      // Redirection vers la session de discussion
       router.push(`/frontoffice/chat/${data.sessionId}`);
     } catch (error) {
-      console.error("Erreur lors de la création de la session :", error);
+      console.error("Erreur lors de la gestion de la suggestion :", error);
     } finally {
       setLoading(false);
     }
   };
+  /*  const handleClick = async (question: Question) => {
+     setLoading(true);
+ 
+     try {
+       const res = await fetch("/api/discussion", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+           title: question.content, // ou question.faqTitle si besoin
+           messages: [
+             {
+               content: question.content,
+               authorType: "user",
+               questionId: question.id, // ✅ lie la question FAQ
+             },
+             {
+               content: question.answer?.content ?? "Aucune réponse disponible",
+               authorType: "ai",
+               questionId: question.id, // ✅ lie la question FAQ
+             },
+           ],
+         }),
+       });
+ 
+       const data = await res.json();
+ 
+       if (!res.ok) throw new Error(data.error || "Échec de la création");
+ 
+       // Redirection vers la session de discussion
+       router.push(`/frontoffice/chat/${data.sessionId}`);
+     } catch (error) {
+       console.error("Erreur lors de la création de la session :", error);
+     } finally {
+       setLoading(false);
+     }
+   }; */
   return (
     <div className="h-[89vh] flex flex-col bg-white w-full max-w-full overflow-hidden">
       {/* Header avec message de bienvenue */}

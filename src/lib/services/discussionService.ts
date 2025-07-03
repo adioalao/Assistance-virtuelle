@@ -42,10 +42,21 @@ export const discussionService = {
          where: { id },
          include: {
             messages: {
-               orderBy: { createdAt: "asc" },
+               orderBy: { authorType: "asc" },
+               select: {
+                  id: true,
+                  content: true,
+                  authorType: true,
+                  createdAt: true,
+                  questionId: true,
+               },
             },
-            user: true
-
+            /*  user: {
+                select: {
+                   name: true,
+                   email: true,
+                },
+             }, */
          },
       });
    },

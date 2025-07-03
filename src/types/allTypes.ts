@@ -36,7 +36,7 @@ export type ChildQuestion = {
 // ✅ Type pour un message dans l'interface
 export type Message = {
     id: number;
-    sender: "user" | "bot";
+    sender: "user" | "ai";
     text: string;
     timestamp: string;
     fileUrl?: string;

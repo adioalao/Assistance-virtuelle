@@ -16,9 +16,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       }
       const data = await discussionService.getSessionById(sessionId);
 
-      /* if (!data) {
+      if (!data) {
          return NextResponse.json({ error: "Session introuvable" }, { status: 404 });
-      } */
+      }
 
       return NextResponse.json({ success: true, session: data });
    } catch (error: any) {

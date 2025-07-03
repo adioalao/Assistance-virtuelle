@@ -13,7 +13,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, onQuestionClick }) 
     <div className="flex-1 overflow-y-auto p-4">
       <div className="flex-1 overflow-auto px-4 py-4 space-y-4">
         {messages.map((message) =>
-          message.sender === "bot" ? (
+          message.sender === "ai" ? (
             <div key={message.id} className="flex flex-col items-start space-x-3">
               <div className="flex items-center space-x-3">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500">
