@@ -130,42 +130,6 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       setLoading(false);
     }
   };
-  /*  const handleClick = async (question: Question) => {
-     setLoading(true);
- 
-     try {
-       const res = await fetch("/api/discussion", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-           title: question.content, // ou question.faqTitle si besoin
-           messages: [
-             {
-               content: question.content,
-               authorType: "user",
-               questionId: question.id, // ✅ lie la question FAQ
-             },
-             {
-               content: question.answer?.content ?? "Aucune réponse disponible",
-               authorType: "ai",
-               questionId: question.id, // ✅ lie la question FAQ
-             },
-           ],
-         }),
-       });
- 
-       const data = await res.json();
- 
-       if (!res.ok) throw new Error(data.error || "Échec de la création");
- 
-       // Redirection vers la session de discussion
-       router.push(`/frontoffice/chat/${data.sessionId}`);
-     } catch (error) {
-       console.error("Erreur lors de la création de la session :", error);
-     } finally {
-       setLoading(false);
-     }
-   }; */
   return (
     <div className="h-[89vh] flex flex-col bg-white w-full max-w-full overflow-hidden">
       {/* Header avec message de bienvenue */}
