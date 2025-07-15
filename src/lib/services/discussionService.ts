@@ -60,4 +60,20 @@ export const discussionService = {
          },
       });
    },
+
+   async deleteSessionById(id: number) {
+      if (!id || typeof id !== "number") {
+         throw new Error("Identifiant de session invalide.");
+      }
+
+      await prisma.message.deleteMany({
+         where: { chatSessionId: id },
+      });
+
+      await prisma.chatSession.delete({
+         where: { id },
+      });
+
+      return { success: true };
+   },
 };

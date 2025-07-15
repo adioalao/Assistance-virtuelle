@@ -37,45 +37,13 @@ type ChatSession = {
 const data = {
   navMain: [
     {
-      title: "Dashboard",
-      url: "Dashboard",
+      title: "Nouveau Chat",
+      url: "/frontoffice",
       icon: LayoutDashboard,
       isActive: true
     },
-    {
-      title: "FAQs",
-      url: "FAQs",
-      icon: HelpCircleIcon,
-    },
-    {
-      title: "Employé",
-      url: "employe",
-      icon: Users,
-    },
-    {
-      title: "Historique",
-      url: "historique",
-      icon: HistoryIcon,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
   ],
+  /*
   navSecondary: [
     {
       title: "Support",
@@ -105,6 +73,7 @@ const data = {
       icon: Brain,
     },
   ],
+  */
 }
 
 export function AppSidebar({ user, ...props }: {
@@ -116,6 +85,7 @@ export function AppSidebar({ user, ...props }: {
 } &
   React.ComponentProps<typeof Sidebar>) {
   const [historyItems, setHistoryItems] = React.useState<{ id: number, name: string, url: string }[]>([])
+
 
   React.useEffect(() => {
     const fetchDiscussions = async () => {
@@ -135,6 +105,7 @@ export function AppSidebar({ user, ...props }: {
 
     fetchDiscussions()
   }, [])
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>

@@ -1,5 +1,5 @@
 /*
- C'est le composant carger de l'affichage du contenu de la page de suggestiion des faqs
+ C'est le composant charger de l'affichage du contenu de la page de suggestiion des faqs
 */
 
 "use client";
@@ -99,7 +99,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       }
 
       // Étape 2 — Crée une nouvelle discussion
-      const res = await fetch("/api/discussions", {
+      const res = await fetch("/api/discussion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -9,8 +9,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       if (!session?.user?.email) {
          return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
       }
-
-      const sessionId = parseInt(params.id, 10);
+      const { id } = await params;
+      const sessionId = parseInt(id, 10);
       if (isNaN(sessionId)) {
          return NextResponse.json({ error: "ID de session invalide" }, { status: 400 });
       }
@@ -24,5 +24,26 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
    } catch (error: any) {
       console.error("Erreur GET /api/discussion/[id]:", error);
       return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
+   }
+}
+
+2
+export async function DELETE(
+   req: NextRequest,
+   { params }: { params: { id: string } }
+) {
+   const session = await getServerSession(authOptions)
+   if (!session || !session.user?.email) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
+   }
+
+   const { id } = await params;
+   const sessionId = parseInt(id, 10);
+
+   try {
+      const deleted = discussionService.deleteSessionById(sessionId)
+      return NextResponse.json(deleted)
+   } catch (error) {
+      return NextResponse.json({ error: "Erreur suppression" }, { status: 500 })
    }
 }

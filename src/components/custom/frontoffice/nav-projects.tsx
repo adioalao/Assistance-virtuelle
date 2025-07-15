@@ -24,6 +24,10 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useState } from "react"
+import { useRouter, usePathname } from "next/navigation"
+import { toast } from "sonner"
+import { useSidebarData } from "./SidebarDataContext"
 
 export function NavProjects({
   projects,
@@ -36,6 +40,40 @@ export function NavProjects({
   }[]
 }) {
   const { isMobile } = useSidebar()
+  // on récupère l'historique + la méthode pour le rafraîchir
+  const { history, refreshHistory } = useSidebarData()
+  const router = useRouter()
+  const pathname = usePathname()
+  const [loading, setLoading] = useState<number | null>(null)
+
+
+  const handleDelete = async (id: number) => {
+    const confirmed = confirm("Voulez-vous vraiment supprimer cette discussion ?")
+    if (!confirmed) return
+
+    setLoading(id)
+
+    try {
+      const res = await fetch(`/api/discussion/${id}`, {
+        method: "DELETE",
+      })
+
+      if (res.ok) {
+        toast.success("Discussion supprimée")
+        // Si on est sur la discussion supprimée, on redirige vers /frontoffice
+        if (pathname && pathname.includes(`/chat/${id}`)) {
+          router.push("/frontoffice/")
+        } else {
+          router.refresh()
+        }
+      }
+    } catch (err) {
+      console.error("Suppression échouée", err)
+      alert("Erreur réseau")
+    } finally {
+      setLoading(null)
+    }
+  }
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -70,9 +108,9 @@ export function NavProjects({
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleDelete(item.id)}>
                   <Trash2 className="text-muted-foreground" />
-                  <span>Delete Project</span>
+                  <span>{loading === item.id ? "Suppression..." : "Supprimer"}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
