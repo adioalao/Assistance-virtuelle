@@ -9,7 +9,7 @@ interface MessageInputProps {
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   handleSendMessage: () => void;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   onSend: (message: string) => void;
   onFileUpload?: (url: string, type: string) => void;
 }

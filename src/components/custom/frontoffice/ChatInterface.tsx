@@ -156,25 +156,27 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       </div>
 
       {/* Zone de saisie */}
-      <div className="px-4 pb-4">
-        <MessageInput
-          inputValue={inputValue}
-          setInputValue={setInputValue}
-          handleSendMessage={() => handleSendMessage(inputValue)}
-          textareaRef={textareaRef}
-          onSend={handleSendMessage}
-          onFileUpload={(fileUrl, fileType) => {
-            const now = new Date().toISOString();
-            const userMessage: Message = {
-              id: Date.now(),
-              sender: "user",
-              text: "Fichier envoyé",
-              fileUrl,
-              fileType,
-              timestamp: now,
-            };
-          }}
-        />
+      <div className="absolute bottom-0 left-0 right-0 flex justify-center z-20">
+        <div className="w-full max-w-4xl px-4 py-2 bg-white">
+          <MessageInput
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            handleSendMessage={() => handleSendMessage(inputValue)}
+            textareaRef={textareaRef}
+            onSend={handleSendMessage}
+            onFileUpload={(fileUrl, fileType) => {
+              const now = new Date().toISOString();
+              const userMessage: Message = {
+                id: Date.now(),
+                sender: "user",
+                text: "Fichier envoyé",
+                fileUrl,
+                fileType,
+                timestamp: now,
+              };
+            }}
+          />
+        </div>
       </div>
     </div>
   );
