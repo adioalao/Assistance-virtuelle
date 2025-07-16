@@ -277,12 +277,59 @@ const ChatPage = () => {
    };
 
    return (
-      <div className="h-screen md:h-[89vh] flex flex-col w-full max-w-full overflow-hidden px-4 sm:px-6 md:px-8 lg:px-12 xl:px-56">
-         <div className="flex-1 overflow-y-auto">
+      <div className="flex h-[90vh] w-full overflow-hidden">
+         <div className="flex flex-col flex-1">
+            {/* 🧠 Zone principale centrée */}
+            <div className="flex-1 flex flex-col items-center overflow-hidden">
+               <div className="w-full max-w-4xl flex flex-col flex-1 overflow-hidden relative">
+
+                  {/* Zone scrollable des messages */}
+                  <div className="flex-1 overflow-y-auto px-4 pt-4 pb-[100px]">
+                     <MessageList
+                        messages={messages}
+                        onQuestionClick={handleQuestionClick}
+                     />
+                  </div>
+
+                  {/* 🧷 Input FIXE en bas */}
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-center z-20">
+                     <div className="w-full max-w-4xl px-4 py-2 bg-white">
+                        <MessageInput
+                           inputValue={inputValue}
+                           setInputValue={setInputValue}
+                           handleSendMessage={() => handleSendMessage(inputValue)}
+                           textareaRef={textareaRef}
+                           onSend={handleSendMessage}
+                           onFileUpload={(fileUrl, fileType) => {
+                              const now = new Date().toISOString();
+                              const userMessage: Message = {
+                                 id: Date.now(),
+                                 sender: "user",
+                                 text: "Fichier envoyé",
+                                 fileUrl,
+                                 fileType,
+                                 timestamp: now,
+                              };
+                              setMessages((prev) => [...prev, userMessage]);
+                           }}
+                        />
+                     </div>
+                  </div>
+
+               </div>
+            </div>
+         </div>
+      </div>
+   );
+};
+
+export default ChatPage;
+
+{/* <div className="flex-1 flex flex-col w-full h-screen ">
+         <div className="flex flex-col overflow-auto">
             <MessageList messages={messages} onQuestionClick={handleQuestionClick} />
          </div>
-
-         <div className="px-2 sm:px-4 pb-2">
+         <div className="border-t bg-white px-2 sm:px-4 py-3 sticky bottom-0 z-10">
             <MessageInput
                inputValue={inputValue}
                setInputValue={setInputValue}
@@ -303,8 +350,5 @@ const ChatPage = () => {
                }}
             />
          </div>
-      </div>
-   );
-};
 
-export default ChatPage;
+      </div> */}
