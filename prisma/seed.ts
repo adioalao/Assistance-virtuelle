@@ -24,22 +24,22 @@ async function main() {
 
   // Création des utilisateurs
   await prisma.user.upsert({
-    where: { email: 'alice.@admin.com' },
+    where: { email: 'alice@admin.com' },
     update: {},
     create: {
       name: 'Alice Dupont',
-      email: 'alice.@admin.com',
+      email: 'alice@admin.com',
       password: alicePassword,
       roleId: adminRole.id,
     },
   });
 
   await prisma.user.upsert({
-    where: { email: 'bob.@user.com' },
+    where: { email: 'bob@user.com' },
     update: {},
     create: {
       name: 'Bob Martin',
-      email: 'bob.@user.com',
+      email: 'bob@user.com',
       password: bobPassword,
       roleId: userRole.id,
     },

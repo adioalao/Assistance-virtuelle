@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -35,7 +35,7 @@ enum RoleName {
 model User {
   id            Int       @id @default(autoincrement())
   name          String?
-  email         String?   @unique(map: "User_email_key")
+  email         String?   @unique
   password      String?
   emailVerified DateTime?
   image         String?
@@ -60,7 +60,7 @@ model ChatSession {
   id        Int       @id @default(autoincrement())
   title     String?
   userId    Int
-  user      User      @relation(fields: [userId], references: [id], map: "Chatroom_idUser_fkey")
+  user      User      @relation(fields: [userId], references: [id])
   messages  Message[]
   createdAt DateTime  @default(now())
 
@@ -76,33 +76,26 @@ model FaqGroup {
 }
 
 model Question {
-  id      Int    @id @default(autoincrement())
-  content String // Texte de la question
-
+  id         Int            @id @default(autoincrement())
+  content    String
   // 🧭 Hiérarchie : une question peut avoir une question parente (ex : sous-question)
-  parentId Int?
-  parent   Question?  @relation("SubQuestions", fields: [parentId], references: [id])
-  children Question[] @relation("SubQuestions") // Toutes les sous-questions liées
-
+  parentId   Int?
+  parent     Question?      @relation("SubQuestions", fields: [parentId], references: [id])
+  children   Question[]     @relation("SubQuestions") // Toutes les sous-questions liées
   // 🔢 Ordre des sous-questions (dans une FAQ par exemple)
-  order Int @default(0)
-
+  order      Int            @default(0)
   // 📦 Statut de la question : provisoire, approuvée, rejetée
-  status QuestionStatus @default(provisional)
-
+  status     QuestionStatus @default(provisional)
   // 🔗 Lien vers l’utilisateur qui a posé la question
-  userId Int?
-  user   User? @relation(fields: [userId], references: [id])
-
+  userId     Int?
+  user       User?          @relation(fields: [userId], references: [id])
   // 🔗 Lien vers la FAQ à laquelle cette question appartient
   faqGroupId Int?
-  faqGroup   FaqGroup? @relation(fields: [faqGroupId], references: [id])
-
+  faqGroup   FaqGroup?      @relation(fields: [faqGroupId], references: [id])
   // 🔗 Réponse unique à cette question
-  answer Answer?
-
-  createdAt DateTime  @default(now())
-  Message   Message[]
+  answer     Answer?
+  createdAt  DateTime       @default(now())
+  Message    Message[]
 
   @@index([createdAt])
 }
@@ -139,20 +132,20 @@ model OAuthAccount {
   id_token          String?
   session_state     String?
 
-  user User @relation(fields: [userId], references: [id], map: "Account_userId_fkey")
+  user User @relation(fields: [userId], references: [id])
 
-  @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
-  @@index([userId], map: "Account_userId_fkey")
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model UserSession {
   id           Int      @id @default(autoincrement())
-  sessionToken String   @unique(map: "Session_sessionToken_key")
+  sessionToken String   @unique
   userId       Int
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], map: "Session_userId_fkey")
+  user         User     @relation(fields: [userId], references: [id])
 
-  @@index([userId], map: "Session_userId_fkey")
+  @@index([userId])
 }
 
 model Message {
@@ -160,9 +153,9 @@ model Message {
   content       String
   authorType    AuthorType  @default(user)
   chatSessionId Int
-  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id], map: "Message_idChatroom_fkey")
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
   createdAt     DateTime    @default(now())
-  questionId    Int? // ✅ clé étrangère vers Question (optionnelle)
+  questionId    Int?
   question      Question?   @relation(fields: [questionId], references: [id])
 
   @@index([chatSessionId])
@@ -171,10 +164,10 @@ model Message {
 
 model VerificationToken {
   identifier String
-  token      String   @unique(map: "VerificationToken_token_key")
+  token      String   @unique
   expires    DateTime
 
-  @@unique([identifier, token], map: "VerificationToken_identifier_token_key")
+  @@unique([identifier, token])
 }
 
 /**
