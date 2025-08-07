@@ -32,13 +32,13 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "Dashboard",
+      url: "dashboard",
       icon: LayoutDashboard,
       isActive: true
     },
     {
       title: "FAQs",
-      url: "FAQs",
+      url: "faqs",
       icon: HelpCircleIcon,
     },
     {
@@ -47,27 +47,27 @@ const data = {
       icon: Users,
     },
     {
-      title: "Historique",
-      url: "historique",
+      title: "Base de connaissances",
+      url: "baseDeConnaissances",
       icon: HistoryIcon,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      // items: [
+      //   {
+      //     title: "General",
+      //     url: "#",
+      //   },
+      //   {
+      //     title: "Team",
+      //     url: "#",
+      //   },
+      //   {
+      //     title: "Billing",
+      //     url: "#",
+      //   },
+      //   {
+      //     title: "Limits",
+      //     url: "#",
+      //   },
+      // ],
     },
   ],
   navSecondary: [

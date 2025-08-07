@@ -1,11 +1,11 @@
 'use client';
 
 import { usePathname } from "next/navigation";
-import { BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../ui/breadcrumb";
+import { BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { ReactNode } from "react";
 
 export default function Pathname() {
-    const pathname = usePathname().split('/').filter(s => s !== '');
+    const pathname = (usePathname() ?? '').split('/').filter(s => s !== '');
     let arrayPathname: ReactNode[] = [];
     pathname.map((s) => {
         arrayPathname.push(<BreadcrumbSeparator key={`sep-${s}`} className="hidden md:block" />)
