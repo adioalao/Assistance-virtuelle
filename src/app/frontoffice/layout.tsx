@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/pages/api/auth/[...nextauth]"
+// import { authOptions } from "@/app/api/auth/[...nextauth]"
 import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/custom/frontoffice/app-sidebar"
 import { ModeToggle } from "@/components/custom/backoffice/toggleTheme"
@@ -14,12 +14,12 @@ import { Toaster } from "@/components/ui/sonner"
 import { SidebarDataProvider } from "@/components/custom/frontoffice/SidebarDataContext"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const session = await getServerSession(authOptions)
-
-  if (!session || session.user.role !== "user") {
-    redirect("/unauthorized")
-  }
-
+  /*  const session = await getServerSession(authOptions)
+ 
+   if (!session || session.user.role !== "user") {
+     redirect("/unauthorized")
+   }
+  */
   return (
     <SidebarProvider>
       <SidebarDataProvider>

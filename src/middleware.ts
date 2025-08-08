@@ -1,53 +1,29 @@
-import { getToken } from "next-auth/jwt";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-    cookieName: "next-auth.session-token",
-  });
+export async function middleware(request: NextRequest) {
+   const session = await auth();
+   const { pathname } = request.nextUrl;
+   const isPublic =
+      pathname.startsWith("/auth/login") ||
+      pathname.startsWith("/auth/error") ||
+      pathname.startsWith("/api/auth") ||
+      pathname.startsWith("/_next") ||
+      pathname.startsWith("/favicon.ico") ||
+      pathname.startsWith("/images");
 
-  const url = req.nextUrl.clone();
-  const pathname = req.nextUrl.pathname;
+   // Si la route est publique, on laisse passer
+   if (isPublic) return NextResponse.next();
+   // Si pas authentifié, on redirige vers /auth/login
+   if (!session?.user) {
+      const loginUrl = new URL("/auth/login", request.url);
+      return NextResponse.redirect(loginUrl);
+   }
 
-  // Non connecté : rediriger vers /auth/login
-  if (!token) {
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
-  }
-
-
-  // 🔐 Règles de protection selon les rôles
-  if (pathname.startsWith("/backoffice") && token.role !== "admin") {
-    url.pathname = "/unauthorized";
-    return NextResponse.redirect(url);
-  }
-
-  if (pathname.startsWith("/frontoffice") && token.role !== "user") {
-    url.pathname = "/unauthorized";
-    return NextResponse.redirect(url);
-  }
-
-  // Si l'utilisateur va sur la racine /
-  if (req.nextUrl.pathname === "/") {
-    if (token.role === "admin") {
-      url.pathname = "/backoffice/Dashboard";
-      return NextResponse.redirect(url);
-    } else if (token.role === "user") {
-      url.pathname = "/frontoffice";
-      return NextResponse.redirect(url);
-    } else {
-      url.pathname = "/unauthorized";
-      return NextResponse.redirect(url);
-    }
-  }
-
-  return NextResponse.next();
+   return NextResponse.next();
 }
 
-// Appliquer le middleware à toutes les routes sauf auth, static et Next.js internals
 export const config = {
-  matcher: ["/((?!auth|api/auth|_next|favicon.ico|public).*)"],
+   matcher: ["/((?!api/auth|_next|favicon.ico|auth/login).*)"],
 };

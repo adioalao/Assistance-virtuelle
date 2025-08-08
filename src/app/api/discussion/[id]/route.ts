@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import * as tt from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]";
 import { discussionService } from "@/lib/services/discussionService";
+
+
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
    try {

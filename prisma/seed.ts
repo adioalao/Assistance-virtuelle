@@ -1,7 +1,6 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/lib/prisma";
+import bcrypt from "bcryptjs";
 
-const bcrypt = require('bcryptjs');
-const prisma = new PrismaClient();
 
 async function main() {
   // Création des rôles si non existants
@@ -27,7 +26,8 @@ async function main() {
     where: { email: 'alice@admin.com' },
     update: {},
     create: {
-      name: 'Alice Dupont',
+      name: "Alice Dupont",
+      identifier: 'Alice',
       email: 'alice@admin.com',
       password: alicePassword,
       roleId: adminRole.id,
@@ -39,6 +39,7 @@ async function main() {
     update: {},
     create: {
       name: 'Bob Martin',
+      identifier: 'Bob',
       email: 'bob@user.com',
       password: bobPassword,
       roleId: userRole.id,

@@ -34,20 +34,26 @@ enum RoleName {
 
 model User {
   id            Int       @id @default(autoincrement())
-  name          String?
-  email         String?   @unique
-  password      String?
+  name          String    @unique
+  username      String    @unique
+  email         String    @unique
+  password      String
   emailVerified DateTime?
   image         String?
+  createdAt     DateTime  @default(now())
+  updateAt      DateTime  @updatedAt
 
-  accounts     OAuthAccount[]
+  accounts     Account[]
   chatSessions ChatSession[]
   sessions     UserSession[]
   tickets      Ticket[]
-  role         Role?          @relation(fields: [roleId], references: [id])
+  role         Role?         @relation(fields: [roleId], references: [id])
   roleId       Int?
 
   Question Question[]
+
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
 }
 
 model Role {
@@ -60,7 +66,7 @@ model ChatSession {
   id        Int       @id @default(autoincrement())
   title     String?
   userId    Int
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   messages  Message[]
   createdAt DateTime  @default(now())
 
@@ -118,8 +124,7 @@ model Ticket {
   createdAt DateTime     @default(now())
 }
 
-model OAuthAccount {
-  id                Int     @id @default(autoincrement())
+model Account {
   userId            Int
   type              String
   provider          String
@@ -131,8 +136,10 @@ model OAuthAccount {
   scope             String?
   id_token          String?
   session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@index([userId])
@@ -168,6 +175,21 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               Int
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
 
 /**
