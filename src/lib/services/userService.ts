@@ -1,19 +1,19 @@
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import prisma from "@/lib/prisma";
 
-const prisma = new PrismaClient();
 
 export const userService = {
 	async getAllUser() {
 		return prisma.user.findMany();
 	},
 
-	async addUser(name: string, email: string, password: string, roleId: number) {
+	async addUser(name: string, username: string, email: string, password: string, roleId: number) {
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		return prisma.user.create({
 			data: {
 				name,
+				username,
 				email,
 				password: hashedPassword,
 				roleId

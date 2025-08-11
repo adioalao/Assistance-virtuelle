@@ -1,5 +1,3 @@
-import { getServerSession } from "next-auth"
-// import { authOptions } from "@/app/api/auth/[...nextauth]"
 import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/custom/frontoffice/app-sidebar"
 import { ModeToggle } from "@/components/custom/backoffice/toggleTheme"
@@ -12,14 +10,10 @@ import {
 } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
 import { SidebarDataProvider } from "@/components/custom/frontoffice/SidebarDataContext"
+import { auth } from "@/auth"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  /*  const session = await getServerSession(authOptions)
- 
-   if (!session || session.user.role !== "user") {
-     redirect("/unauthorized")
-   }
-  */
+  const session = await auth()
   return (
     <SidebarProvider>
       <SidebarDataProvider>
@@ -27,8 +21,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
         <AppSidebar
           user={{
 
-            name: session.user.name ?? "User",
-            email: session.user.email ?? "user@example.com",
+            name: session?.user.name ?? "User",
+            email: session?.user.email ?? "user@example.com",
             avatar: "/avatars/shadcn.jpg", // tu peux le récupérer depuis ta BDD si tu l’as
           }}
         />

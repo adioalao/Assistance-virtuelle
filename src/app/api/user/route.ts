@@ -21,9 +21,10 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-	const { name, email, password, roleId }:
+	const { name, username, email, password, roleId }:
 		{
 			name: string,
+			username: string,
 			email: string,
 			password: string,
 			roleId: number
@@ -36,6 +37,6 @@ export async function POST(req: NextRequest) {
 	if (!email || !password) {
 		return NextResponse.json({ error: 'Email et password sont requis' }, { status: 400 })
 	}
-	const post = await userService.addUser(name, email, password, roleId);
+	const post = await userService.addUser(name, username, email, password, roleId);
 	return NextResponse.json(post, { status: 201, headers: jsonHeaders })
 }

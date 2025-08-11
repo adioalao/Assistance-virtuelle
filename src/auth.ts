@@ -1,70 +1,70 @@
 import NextAuth from "next-auth"
-import GitHub from "next-auth/providers/github"
-import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import prisma from "@/lib/prisma"
-import bcrypt from "bcryptjs"
+import authConfig from "./auth.config"
 
 export const { auth, handlers, signIn } = NextAuth({
    adapter: PrismaAdapter(prisma),
-   providers: [
-      GitHub,
-      CredentialsProvider({
-         name: "credentials",
-         credentials: {
-            username: { label: "Username", type: "text" },
-            password: { label: "Password", type: "password" },
-         },
-         authorize: async (credentials) => {
-            if (!credentials?.username || !credentials?.password) {
-               return null;
-            }
-            const user = await prisma.user.findUnique({
-               where: { username: credentials.username as string },
-               include: { role: true },
-            });
+   session: { strategy: "database" },
+   ...authConfig
+   // providers: [
+   //    GitHub,
+   //    CredentialsProvider({
+   //       name: "credentials",
+   //       credentials: {
+   //          username: { label: "Username", type: "text" },
+   //          password: { label: "Password", type: "password" },
+   //       },
+   //       authorize: async (credentials) => {
+   //          if (!credentials?.username || !credentials?.password) {
+   //             return null;
+   //          }
+   //          const user = await prisma.user.findUnique({
+   //             where: { username: credentials.username as string },
+   //             include: { role: true },
+   //          });
 
-            if (!user || !user.password) return null;
+   //          if (!user || !user.password) return null;
 
-            const isValid = bcrypt.compare(credentials.password as string, user.password);
-            if (!isValid) return null;
+   //          const isValid = bcrypt.compare(credentials.password as string, user.password);
+   //          if (!isValid) return null;
 
-            return {
-               id: user.id.toString(),
-               name: user.name,
-               email: user.email,
-               role: user.role?.name ?? "", // Ensure role is always a string
-            };
-         }
-      })
-   ],
-   pages: {
-      signIn: "/auth/login",
-      error: "/auth/error",
-   },
+   //          return {
+   //             id: user.id.toString(),
+   //             name: user.name,
+   //             email: user.email,
+   //             role: user.role?.name ?? "", // Ensure role is always a string
+   //          };
+   //       }
+   //    })
+   // ],
+   // pages: {
+   //    signIn: "/auth/login",
+   //    error: "/auth/error",
+   // },
 
-   session: {
-      strategy: "jwt",
-      maxAge: 60 * 20
-   },
+   // session: {
+   //    strategy: "jwt",
+   //    maxAge: 60 * 20
+   // },
 
-   secret: process.env.NEXTAUTH_SECRET,
+   // secret: process.env.NEXTAUTH_SECRET,
 
-   callbacks: {
-      async jwt({ token, user }) {
-         if (user) {
-            token.sub = user.id.toString();
-            token.role = (user as any).role; // 👈 Ajout du rôle au token
-         }
-         return token;
-      },
+   // callbacks: {
+   //    async jwt({ token, user }) {
+   //       if (user) {
+   //          token.sub = user.id.toString();
+   //          token.role = (user as any).role; // 👈 Ajout du rôle au token
+   //       }
+   //       return token;
+   //    },
 
-      async session({ session, token }) {
-         if (session.user) {
-            session.user.id = token.sub!;
-            session.user.role = token.role as string; //  Ajout du rôle à la session
-         }
-         return session;
-      },
-   },
+   //    async session({ session, token }) {
+   //       if (session.user) {
+   //          session.user.id = token.sub!;
+   //          session.user.role = token.role as string; //  Ajout du rôle à la session
+   //       }
+   //       return session;
+   //    },
+   // },
 })
