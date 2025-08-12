@@ -78,7 +78,7 @@ const data = {
 
 export function AppSidebar({ user, ...props }: {
   user: {
-    name: string
+    username: string
     email: string
     avatar: string
   }

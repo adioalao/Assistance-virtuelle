@@ -30,9 +30,9 @@ const authConfig: NextAuthConfig = {
             if (!isValid) return null;
             return {
                id: user.id.toString(),
-               name: user.name,
+               username: user.username,
                email: user.email,
-               role: user.role?.name ?? "",
+               role: user.role?.name ?? "user",
             };
          },
       }),
@@ -41,23 +41,24 @@ const authConfig: NextAuthConfig = {
       signIn: "/auth/login",
       error: "/auth/error",
    },
-   session: {
-      strategy: "database",
-      maxAge: 60 * 20,
-   },
    secret: process.env.NEXTAUTH_SECRET,
    callbacks: {
       async jwt({ token, user }) {
+         // Lors de la connexion initiale
          if (user) {
-            token.sub = user.id;
-            token.role = user.role;
+            token.sub = user.id
+            token.role = user.role
+            token.name = user.name
+            token.email = user.email
          }
          return token;
       },
       async session({ session, token }) {
-         if (session.user) {
-            session.user.id = token.sub!;
-            session.user.role = token.role as string;
+         if (session.user && token) {
+            session.user.id = token.sub!
+            session.user.role = token.role as string
+            session.user.name = token.name
+            session.user.email = token.email as string
          }
          return session;
       },

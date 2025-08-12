@@ -43,14 +43,14 @@ export function LoginForm({
       setLoading(true);
       const res = await login(data);
       setLoading(false);
-      console.log({ data, res });
 
       if (res?.error) {
          setError(res.error);
-      } else {
+      } /* else {
          router.refresh();
          router.push("/frontoffice");
-      }
+
+      } */
    };
 
    return (

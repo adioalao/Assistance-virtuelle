@@ -1,5 +1,3 @@
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/api/auth/[...nextauth]"
 import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import Pathname from "@/components/custom/backoffice/pathname"
@@ -11,21 +9,18 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { auth } from "@/auth"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-	const session = await getServerSession(authOptions)
-
-	if (!session || session.user.role !== "admin") {
-		redirect("/unauthorized")
-	}
+	const session = await auth()
 
 	return (
 		<SidebarProvider>
 			{/* 👇 On passe le vrai user ici */}
 			<AppSidebar
 				user={{
-					name: session.user.name ?? "Admin",
-					email: session.user.email ?? "admin@example.com",
+					name: session?.user?.name ?? "Admin",
+					email: session?.user?.email ?? "admin@example.com",
 					avatar: "/avatars/shadcn.jpg", // tu peux le récupérer depuis ta BDD si tu l’as
 				}}
 			/>

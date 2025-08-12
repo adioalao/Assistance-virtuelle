@@ -1,7 +1,5 @@
-import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/custom/frontoffice/app-sidebar"
 import { ModeToggle } from "@/components/custom/backoffice/toggleTheme"
-import { Breadcrumb } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
@@ -20,9 +18,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
         {/* 👇 On passe le vrai user ici */}
         <AppSidebar
           user={{
-
-            name: session?.user.name ?? "User",
-            email: session?.user.email ?? "user@example.com",
+            username: session?.user?.username ?? "User",
+            email: session?.user?.email ?? "user@example.com",
             avatar: "/avatars/shadcn.jpg", // tu peux le récupérer depuis ta BDD si tu l’as
           }}
         />
