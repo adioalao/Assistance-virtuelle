@@ -88,6 +88,7 @@ export default function EmployePage() {
       setDeleting(false)
     }
   }
+  console.log('render', 'Employé');
 
   return (
     <div className="min-h-screen bg-white p-10 text-center">

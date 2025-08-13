@@ -26,7 +26,7 @@ export default function Home() {
       {
         id: 1,
         text: "Hi, Comment puis-je t'aider aujourd'hui?",
-        sender: "bot",
+        sender: "ai",
         timestamp: new Date().toISOString(),
       },
     ])

@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import Pathname from "@/components/custom/backoffice/pathname"
 import { ModeToggle } from "@/components/custom/backoffice/toggleTheme"
@@ -9,7 +8,7 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { auth } from "@/auth"
+import { auth } from "@/auth-jwt"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
 	const session = await auth()
@@ -19,7 +18,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 			{/* 👇 On passe le vrai user ici */}
 			<AppSidebar
 				user={{
-					name: session?.user?.name ?? "Admin",
+					name: session?.user?.username ?? "Admin",
 					email: session?.user?.email ?? "admin@example.com",
 					avatar: "/avatars/shadcn.jpg", // tu peux le récupérer depuis ta BDD si tu l’as
 				}}

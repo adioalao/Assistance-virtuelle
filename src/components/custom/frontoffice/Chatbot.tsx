@@ -39,7 +39,7 @@ const Chatbot = forwardRef<ChatbotHandle>((props, ref) => {
       },
       {
         id: Date.now() + 1,
-        sender: "bot",
+        sender: "ai",
         text: "Voici la réponse générée par l'IA (simulée ici).",
         timestamp: now,
       },
