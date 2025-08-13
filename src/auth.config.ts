@@ -48,7 +48,7 @@ const authConfig: NextAuthConfig = {
          if (user) {
             token.sub = user.id
             token.role = user.role
-            token.name = user.name
+            token.username = user.username
             token.email = user.email
          }
          return token;
@@ -57,7 +57,7 @@ const authConfig: NextAuthConfig = {
          if (session.user && token) {
             session.user.id = token.sub!
             session.user.role = token.role as string
-            session.user.name = token.name
+            session.user.username = token.username as string
             session.user.email = token.email as string
          }
          return session;

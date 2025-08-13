@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
 import { SidebarDataProvider } from "@/components/custom/frontoffice/SidebarDataContext"
-import { auth } from "@/auth"
+import { auth } from "@/auth-jwt"
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const session = await auth()
+  console.log(session?.user);
+
   return (
     <SidebarProvider>
       <SidebarDataProvider>

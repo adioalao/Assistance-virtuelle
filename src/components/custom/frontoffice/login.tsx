@@ -46,11 +46,9 @@ export function LoginForm({
 
       if (res?.error) {
          setError(res.error);
-      } /* else {
-         router.refresh();
-         router.push("/frontoffice");
-
-      } */
+      } else {
+         router.push("/"); // middleware redirigera selon rôle
+      }
    };
 
    return (
