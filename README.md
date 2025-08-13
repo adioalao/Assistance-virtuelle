@@ -48,34 +48,13 @@ Modifier le fichier `.env` avec les bonnes informations :
 DATABASE_URL="postgresql://utilisateur:motdepasse@localhost:5432/ma_base?schema=public"
 ```
 
-### 5. Éditer schema.prisma
-
-Exemple de modèle simple (à adapter selon vos besoins) :
-
-```prisma
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
-}
-```
-
-### 6. Générer le client Prisma
+### 5. Générer le client Prisma
 
 ```bash
 pnpm exec prisma generate
 ```
 
-### 7. Appliquer les migrations
+### 6. Appliquer les migrations
 
 ```bash
 pnpm exec prisma migrate dev --name init
@@ -87,41 +66,10 @@ Cette commande :
 - ✅ Applique les modèles définis dans `schema.prisma`
 - ✅ Génère automatiquement le client Prisma
 
-### 8. Créer des données de test
+### 7. Créer des données de test
 
 ```bash
 pnpm exec prisma db seed
-```
-
-### 9. Exemple d'utilisation
-
-```typescript
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
-
-async function main() {
-  // Créer un utilisateur
-  const user = await prisma.user.create({
-    data: {
-      name: "John Doe",
-      email: "john@example.com",
-    },
-  });
-
-  // Récupérer tous les utilisateurs
-  const users = await prisma.user.findMany();
-  console.log(users);
-}
-
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
 ```
 
 ## 📚 Commandes utiles
