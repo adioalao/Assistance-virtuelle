@@ -39,6 +39,8 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
         }
 
         const data = await res.json();
+        console.log(data);
+
         // console.log("Données reçues du backend :", JSON.stringify(data, null, 2));
 
         if (Array.isArray(data)) {
