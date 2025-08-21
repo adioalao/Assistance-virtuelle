@@ -176,6 +176,8 @@ const ChatPage = () => {
          try {
             const res = await fetch(`/api/discussion/${id}`);
             const data = await res.json();
+            console.log(data);
+
 
             if (!data.success || !data.session) throw new Error("Session introuvable");
 
@@ -197,7 +199,7 @@ const ChatPage = () => {
                            })) ?? [];
                         }
                      } catch (e) {
-                        console.warn(`Erreur récupération de la question liée (ID: ${m.questionId})`, e);
+                        console.error(`Erreur récupération de la question liée (ID: ${m.questionId})`, e);
                      }
                   }
 

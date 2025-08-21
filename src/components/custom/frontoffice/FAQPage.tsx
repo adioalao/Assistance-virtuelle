@@ -1,4 +1,3 @@
-// app/faqpage.tsx
 "use client";
 
 import React, {
@@ -123,7 +122,7 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
 
       const botMessage: Message = {
         id: Date.now() + 1,
-        sender: "bot",
+        sender: "ai",
         text: fullQuestion.answer.content || "Aucune réponse disponible.",
         timestamp: now,
         children: fullQuestion.children?.map((child) => ({

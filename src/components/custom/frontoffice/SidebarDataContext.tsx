@@ -10,7 +10,7 @@ type ChatSession = {
 
 type SidebarDataContextType = {
    history: ChatSession[]
-   refreshHistory: () => Promise<void>
+   refreshHistory: () => Promise<void | null>
 }
 
 const SidebarDataContext = createContext<SidebarDataContextType | undefined>(undefined)
@@ -21,7 +21,7 @@ export const SidebarDataProvider = ({ children }: { children: React.ReactNode })
    const fetchHistory = async () => {
       try {
          const res = await fetch("/api/history")
-         if (!res.ok) throw new Error("Erreur API historique")
+         if (!res.ok) return null;
          const data = await res.json()
          setHistory(
             data.map((d: any) => ({

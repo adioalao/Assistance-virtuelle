@@ -60,6 +60,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
 
   const handleSendMessage = async (userText: string) => {
     if (!userText.trim()) return;
+    console.log(userText);
 
     const now = new Date().toISOString();
 

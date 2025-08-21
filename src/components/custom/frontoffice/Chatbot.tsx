@@ -2,7 +2,6 @@
 
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { Message } from "@/types/allTypes";
-import MessageList from "./MessageList";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
 import FAQPage, { FAQPageHandle } from "./FAQPage";

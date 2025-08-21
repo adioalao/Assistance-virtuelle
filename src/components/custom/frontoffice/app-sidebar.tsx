@@ -91,7 +91,7 @@ export function AppSidebar({ user, ...props }: {
     const fetchDiscussions = async () => {
       try {
         const res = await fetch("/api/history")
-        if (!res.ok) throw new Error("Erreur API historique")
+        if (!res.ok) return { error: "Erreur lors de la récupération de l'historique" }
         const data: ChatSession[] = await res.json()
         setHistoryItems(data.map(session => ({
           id: session.id,

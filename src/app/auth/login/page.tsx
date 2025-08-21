@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/custom/frontoffice/login"
+import { LoginForm } from "@/components/custom/login"
 
 export default function Page() {
    return (

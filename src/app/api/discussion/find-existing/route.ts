@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { PrismaClient } from "@prisma/client";
-import { authOptions } from "@/app/api/auth/[...nextauth]";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth-jwt";
 
 export async function POST(req: Request) {
    try {
-      const session = await getServerSession(authOptions);
+      const session = await auth()
 
       if (!session?.user?.email) {
          return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
