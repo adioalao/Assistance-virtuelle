@@ -9,6 +9,7 @@ import { Message, Question } from "@/types/allTypes";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
 import { useRouter } from "next/navigation";
+import { getErrorMessage } from "@/utils/error-handler";
 
 export interface ChatbotHandle {
   startNewSession: () => void;
@@ -16,7 +17,6 @@ export interface ChatbotHandle {
 
 const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
   const [inputValue, setInputValue] = useState<string>("");
-  const [modeLibre, setModeLibre] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null) as React.RefObject<HTMLTextAreaElement>;
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -128,7 +128,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
 
       router.push(`/frontoffice/chat/${data.sessionId}`);
     } catch (error) {
-      console.error("Erreur lors de la gestion de la suggestion :", error);
+      console.log(getErrorMessage(error));
     } finally {
       setLoading(false);
     }

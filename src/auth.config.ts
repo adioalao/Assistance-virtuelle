@@ -19,7 +19,7 @@ const authConfig: NextAuthConfig = {
                return null;
             }
             const validatedCredentials = LoginSchema.parse(credentials)
-            const user = await prisma.user.findUnique({
+            const user = await prisma.user.findFirst({
                where: {
                   username: validatedCredentials.username,
                },

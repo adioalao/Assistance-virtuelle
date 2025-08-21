@@ -34,7 +34,6 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [session, setSession] = useState<number>(Date.now());
   const [showInitialQuestions, setShowInitialQuestions] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
 
   // Récupération des questions via l'API
   useEffect(() => {
@@ -141,40 +140,6 @@ const FAQPage = forwardRef<FAQPageHandle, FAQPageProps>(({
       console.error("Erreur dans handleQuestionClick:", err);
     }
   };
-  /* const handleQuestionClick = (question: Question) => {
-    setCurrentQuestion(question);
-
-    const botText =
-      question.answer.content ||
-      "Désolé, aucune réponse disponible pour cette question.";
-
-    const now = new Date().toISOString();
-
-    const userMessage: Message = {
-      id: Date.now(),
-      sender: "user",
-      text: question.content,
-      timestamp: now,
-    };
-
-    const botMessage: Message = {
-      id: Date.now() + 1,
-      sender: "bot",
-      text: botText,
-      timestamp: now,
-      children: question.children?.map((child) => ({
-        id: child.id,
-        contenu: child.content,
-      })),
-    };
-
-    setMessages((prev) => [...prev, userMessage, botMessage]);
-
-    // ✅ Active automatiquement le mode libre si plus de sous-questions
-    if (!question.children || question.children.length === 0) {
-      setModeLibre(true);
-    }
-  }; */
 
   const questionsToDisplay = currentQuestion?.children ?? (!currentQuestion ? questions : []);
 

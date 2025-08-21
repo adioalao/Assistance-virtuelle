@@ -6,12 +6,12 @@ export async function POST(req: Request) {
    try {
       const session = await auth()
 
-      if (!session?.user?.email) {
+      if (!session?.user?.username) {
          return NextResponse.json({ error: "Utilisateur non authentifié" }, { status: 401 });
       }
 
       const user = await prisma.user.findUnique({
-         where: { email: session.user.email },
+         where: { username: session.user.username },
       });
 
       if (!user) {
@@ -41,7 +41,6 @@ export async function POST(req: Request) {
 
       return NextResponse.json({ exists: false });
    } catch (err) {
-      console.error("[find-existing] Erreur :", err);
       return NextResponse.json({ error: "Erreur interne du serveur" }, { status: 500 });
    }
 }

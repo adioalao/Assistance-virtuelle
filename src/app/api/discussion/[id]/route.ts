@@ -3,10 +3,11 @@ import { discussionService } from "@/lib/services/discussionService";
 import { auth } from "@/auth-jwt";
 
 
-const session = await auth()
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
    try {
-      if (!session?.user?.email) {
+      const session = await auth()
+
+      if (!session?.user?.username) {
          return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
       }
       const { id } = await params;
@@ -22,7 +23,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
       return NextResponse.json({ success: true, session: data });
    } catch (error: any) {
-      console.error("Erreur GET /api/discussion/[id]:", error);
       return NextResponse.json({ error: "Erreur interne" }, { status: 500 });
    }
 }
@@ -32,6 +32,7 @@ export async function DELETE(
    req: NextRequest,
    { params }: { params: { id: string } }
 ) {
+   const session = await auth()
    if (!session || !session.user?.email) {
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 })
    }

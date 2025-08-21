@@ -6,7 +6,8 @@ import { auth } from "@/auth-jwt";
 export async function POST(req: NextRequest) {
    try {
       const session = await auth();
-      if (!session?.user?.email) {
+
+      if (!session?.user?.username) {
          return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
       }
 
@@ -16,9 +17,9 @@ export async function POST(req: NextRequest) {
          return NextResponse.json({ error: "Messages manquants ou invalides" }, { status: 400 });
       }
 
-      // Récupérer l'utilisateur par email pour obtenir son id
+      // Récupérer l'utilisateur par username pour obtenir son id
       const user = await prisma.user.findUnique({
-         where: { email: session.user.email },
+         where: { username: session.user.username },
          select: { id: true }
       });
 

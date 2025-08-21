@@ -1,7 +1,7 @@
 "use server"
 import { LoginSchema } from "@/schemas";
 import { z } from "zod";
-import { signIn } from "@/auth";
+import { signIn } from "@/auth-jwt";
 import { AuthError } from "next-auth";
 
 export const login = async (data: z.infer<typeof LoginSchema>) => {

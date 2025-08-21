@@ -2,20 +2,12 @@
 
 import * as React from "react"
 import {
-  Brain,
-  HelpCircleIcon,
   HistoryIcon,
   LayoutDashboard,
-  LifeBuoy,
-  LineChart,
-  PieChart,
-  Send,
-  Users,
 } from "lucide-react"
 
 import { NavMain } from "@/components/custom/frontoffice/nav-main"
 import { NavProjects } from "@/components/custom/frontoffice/nav-projects"
-import { NavSecondary } from "@/components/custom/frontoffice/nav-secondary"
 import { NavUser } from "@/components/custom/frontoffice/nav-user"
 import {
   Sidebar,
@@ -27,6 +19,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import Image from "next/image"
+import { getErrorMessage } from "@/utils/error-handler"
 
 type ChatSession = {
   id: number
@@ -46,11 +39,6 @@ const data = {
   /*
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
       title: "Feedback",
       url: "#",
       icon: Send,
@@ -61,16 +49,6 @@ const data = {
       name: "Analyse de données",
       url: "#",
       icon: LineChart,
-    },
-    {
-      name: "Base de connaissances  ",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "LLM",
-      url: "#",
-      icon: Brain,
     },
   ],
   */
@@ -91,15 +69,17 @@ export function AppSidebar({ user, ...props }: {
     const fetchDiscussions = async () => {
       try {
         const res = await fetch("/api/history")
-        if (!res.ok) return { error: "Erreur lors de la récupération de l'historique" }
+
+        if (!res.ok) throw new Error("Erreur chargement historique")
         const data: ChatSession[] = await res.json()
+
         setHistoryItems(data.map(session => ({
           id: session.id,
           name: session.title?.slice(0, 25) || "(Sans titre)",
           url: `/frontoffice/chat/${session.id}`,
         })))
       } catch (err) {
-        console.error("Erreur chargement historique :", err)
+        getErrorMessage(err)
       }
     }
 

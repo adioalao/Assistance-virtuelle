@@ -23,8 +23,12 @@ export const SidebarDataProvider = ({ children }: { children: React.ReactNode })
          const res = await fetch("/api/history")
          if (!res.ok) return null;
          const data = await res.json()
+         if (!Array.isArray(data)) {
+            console.error("API /api/history n’a pas renvoyé un tableau:", data)
+            return
+         }
          setHistory(
-            data.map((d: any) => ({
+            data.map((d: ChatSession) => ({
                id: d.id,
                title: d.title?.slice(0, 25) || "(Sans titre)",
                url: `/frontoffice/chat/${d.id}`,

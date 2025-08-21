@@ -4,7 +4,6 @@ import React from "react";
 import Image from "next/image"
 import { SquarePen } from 'lucide-react';
 import { DynamicIcon } from 'lucide-react/dynamic';
-//import {  PanelRight } from 'lucide-react';
 import Img from "./logo.webp"; // Assure-toi que le chemin d'image est correct
 import LogoutButton from "./LogoutButton";
 interface HeaderProps {
