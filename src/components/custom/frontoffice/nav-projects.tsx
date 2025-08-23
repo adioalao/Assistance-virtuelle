@@ -28,6 +28,16 @@ import { useState } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { toast } from "sonner"
 import { useSidebarData } from "./SidebarDataContext"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export function NavProjects({
   projects,
@@ -44,34 +54,34 @@ export function NavProjects({
   const { history, refreshHistory } = useSidebarData()
   const router = useRouter()
   const pathname = usePathname()
-  const [loading, setLoading] = useState<number | null>(null)
-
+  const [openDeleteAlert, setOpenDeleteAlert] = useState<boolean>(false)
 
   const handleDelete = async (id: number) => {
-    const confirmed = confirm("Voulez-vous vraiment supprimer cette discussion ?")
-    if (!confirmed) return
-
-    setLoading(id)
-
     try {
       const res = await fetch(`/api/discussion/${id}`, {
         method: "DELETE",
       })
 
-      if (res.ok) {
-        toast.success("Discussion supprimée")
-        // Si on est sur la discussion supprimée, on redirige vers /frontoffice
-        if (pathname && pathname.includes(`/chat/${id}`)) {
-          router.push("/frontoffice/")
-        } else {
-          router.refresh()
-        }
+      if (!res.ok) {
+        toast.error("Erreur lors de la suppression");
+        throw new Error("Erreur lors de la suppression");
+      }
+      toast.success("Discussion supprimée")
+
+      try {
+
+      } catch (error) {
+
+      }
+      // Si on est sur la discussion supprimée, on redirige vers /frontoffice
+      if (pathname && pathname.includes(`/chat/${id}`)) {
+        router.push("/frontoffice/")
+
+        // ⏺️ on rafraîchit la liste dans le sidebar
+        await refreshHistory()
       }
     } catch (err) {
-      console.error("Suppression échouée", err)
-      alert("Erreur réseau")
-    } finally {
-      setLoading(null)
+      toast.error("Erreur lors de la suppression")
     }
   }
 
@@ -108,12 +118,26 @@ export function NavProjects({
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleDelete(item.id)}>
+                <DropdownMenuItem onClick={() => setOpenDeleteAlert(true)}>
                   <Trash2 className="text-muted-foreground" />
-                  <span>{loading === item.id ? "Suppression..." : "Supprimer"}</span>
+                  <span>Supprimer</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            <AlertDialog open={openDeleteAlert} onOpenChange={setOpenDeleteAlert}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Cette action est irréversible. La discussion sera définitivement supprimée.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction onClick={() => handleDelete(item.id)}>Continuer</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>

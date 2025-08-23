@@ -18,7 +18,6 @@ const ChatPage = () => {
       const fetchSessionAndQuestions = async () => {
          try {
             const res = await fetch(`/api/discussion/${id}`);
-            console.log('1- res:', res);
 
             if (!res.ok) {
                throw new Error("Erreur lors de l'appel de api/discussion/id");
@@ -171,31 +170,3 @@ const ChatPage = () => {
 };
 
 export default ChatPage;
-
-{/* <div className="flex-1 flex flex-col w-full h-screen ">
-         <div className="flex flex-col overflow-auto">
-            <MessageList messages={messages} onQuestionClick={handleQuestionClick} />
-         </div>
-         <div className="border-t bg-white px-2 sm:px-4 py-3 sticky bottom-0 z-10">
-            <MessageInput
-               inputValue={inputValue}
-               setInputValue={setInputValue}
-               handleSendMessage={() => handleSendMessage(inputValue)}
-               textareaRef={textareaRef}
-               onSend={handleSendMessage}
-               onFileUpload={(fileUrl, fileType) => {
-                  const now = new Date().toISOString();
-                  const userMessage: Message = {
-                     id: Date.now(),
-                     sender: "user",
-                     text: "Fichier envoyé",
-                     fileUrl,
-                     fileType,
-                     timestamp: now,
-                  };
-                  setMessages((prev) => [...prev, userMessage]);
-               }}
-            />
-         </div>
-
-      </div> */}

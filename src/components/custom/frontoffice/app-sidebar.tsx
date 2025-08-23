@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sidebar"
 import Image from "next/image"
 import { getErrorMessage } from "@/utils/error-handler"
+import { useSidebarData } from "./SidebarDataContext"
 
 type ChatSession = {
   id: number
@@ -62,29 +63,7 @@ export function AppSidebar({ user, ...props }: {
   }
 } &
   React.ComponentProps<typeof Sidebar>) {
-  const [historyItems, setHistoryItems] = React.useState<{ id: number, name: string, url: string }[]>([])
-
-
-  React.useEffect(() => {
-    const fetchDiscussions = async () => {
-      try {
-        const res = await fetch("/api/history")
-
-        if (!res.ok) throw new Error("Erreur chargement historique")
-        const data: ChatSession[] = await res.json()
-
-        setHistoryItems(data.map(session => ({
-          id: session.id,
-          name: session.title?.slice(0, 25) || "(Sans titre)",
-          url: `/frontoffice/chat/${session.id}`,
-        })))
-      } catch (err) {
-        getErrorMessage(err)
-      }
-    }
-
-    fetchDiscussions()
-  }, [])
+  const { history: historyItems } = useSidebarData()
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -104,7 +83,7 @@ export function AppSidebar({ user, ...props }: {
         <NavProjects
           projects={historyItems.map(item => ({
             id: item.id,
-            name: item.name,
+            name: item.title,
             url: item.url,
             icon: HistoryIcon,
           }))}

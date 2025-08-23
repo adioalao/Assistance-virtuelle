@@ -1,7 +1,6 @@
 /*
  C'est le composant charger de l'affichage du contenu de la page de suggestiion des faqs
 */
-
 "use client";
 
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, RefObject } from "react";
@@ -125,7 +124,6 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || "Échec de la création");
-
       router.push(`/frontoffice/chat/${data.sessionId}`);
     } catch (error) {
       console.log(getErrorMessage(error));
