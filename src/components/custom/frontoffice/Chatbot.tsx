@@ -17,6 +17,8 @@ const Chatbot = forwardRef<ChatbotHandle>((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const faqPageRef = useRef<FAQPageHandle>(null);
 
+
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";

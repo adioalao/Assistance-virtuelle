@@ -23,7 +23,6 @@ const MessageInput: React.FC<MessageInputProps> = ({
   onFileUpload,
 }) => {
 
-  console.log('render tes =');
   return (
     <div className="my-2 pr-2 flex items-center gap-2 border-solid border-gray-200 border rounded-sm bg-white">
       {/* Zone de texte */}

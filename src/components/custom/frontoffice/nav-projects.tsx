@@ -68,7 +68,7 @@ export function NavProjects({
       if (!res.ok) {
         // En cas d'erreur, on recharge pour rétablir l'état correct
         toast.error("Erreur lors de la suppression")
-        // Ici on pourrait aussi re-ajouter l'élément localement
+        // Ici, on pourrait aussi re-ajouter l'élément localement
         return null;
       }
 	    // Mise à jour optimiste - on retire immédiatement de l'interface
