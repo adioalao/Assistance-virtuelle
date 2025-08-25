@@ -1,14 +1,15 @@
 /*
- C'est le composant charger de l'affichage du contenu de la page de suggestiion des faqs
+ C'est le composant charger de l'affichage du contenu de la page de suggestion des faqs
 */
 "use client";
 
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, RefObject } from "react";
+import React, { useState, useRef, useEffect, forwardRef} from "react";
 import { Message, Question } from "@/types/allTypes";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
 import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/utils/error-handler";
+import { useSidebarData } from "./SidebarDataContext";
 
 export interface ChatbotHandle {
   startNewSession: () => void;
@@ -19,8 +20,10 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null) as React.RefObject<HTMLTextAreaElement>;
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  
+  // Récupération des méthodes du contexte sidebar
+  const { addSession } = useSidebarData();
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -38,9 +41,6 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
         }
 
         const data = await res.json();
-        console.log(data);
-
-        // console.log("Données reçues du backend :", JSON.stringify(data, null, 2));
 
         if (Array.isArray(data)) {
           setQuestions(data);
@@ -48,7 +48,6 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
           throw new Error("Le format des données reçues est incorrect.");
         }
       } catch (err) {
-        setError((err as Error).message);
         console.error("Erreur lors de la récupération des questions :", err);
       } finally {
         setLoading(false);
@@ -124,6 +123,14 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || "Échec de la création");
+      
+      // ✅ Ajout immédiat à la sidebar sans attendre le rechargement
+      addSession({
+        id: data.sessionId,
+        title: question.content.slice(0, 25) || "(Sans titre)",
+        url: `/frontoffice/chat/${data.sessionId}`
+      });
+      
       router.push(`/frontoffice/chat/${data.sessionId}`);
     } catch (error) {
       console.log(getErrorMessage(error));
@@ -131,6 +138,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       setLoading(false);
     }
   };
+
   return (
     <div className="h-[89vh] flex flex-col bg-white w-full max-w-full overflow-hidden">
       {/* Header avec message de bienvenue */}
@@ -146,7 +154,7 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
               <button
                 key={q.id}
                 disabled={loading}
-                className="rounded-sm border border-solid border-gray-300 bg-white px-3 py-3 text-sm md:text-base text-gray-800 hover:bg-gray-200 w-full sm:w-auto"
+                className="rounded-sm border border-solid border-gray-300 bg-white px-3 py-3 text-sm md:text-base text-gray-800 hover:bg-gray-200 w-full sm:w-auto disabled:opacity-50"
                 onClick={() => handleClick(q)}
               >
                 {q.content}
@@ -165,17 +173,6 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
             handleSendMessage={() => handleSendMessage(inputValue)}
             textareaRef={textareaRef}
             onSend={handleSendMessage}
-            onFileUpload={(fileUrl, fileType) => {
-              const now = new Date().toISOString();
-              const userMessage: Message = {
-                id: Date.now(),
-                sender: "user",
-                text: "Fichier envoyé",
-                fileUrl,
-                fileType,
-                timestamp: now,
-              };
-            }}
           />
         </div>
       </div>

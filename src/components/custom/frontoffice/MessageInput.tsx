@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import FileUploader from "./FileUploader";
 import { Button } from "@/components/ui/button";

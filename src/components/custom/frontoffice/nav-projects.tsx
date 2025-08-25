@@ -50,38 +50,42 @@ export function NavProjects({
   }[]
 }) {
   const { isMobile } = useSidebar()
-  // on récupère l'historique + la méthode pour le rafraîchir
-  const { history, refreshHistory } = useSidebarData()
+  const { removeSession } = useSidebarData()
   const router = useRouter()
   const pathname = usePathname()
-  const [openDeleteAlert, setOpenDeleteAlert] = useState<boolean>(false)
+  const [openDeleteAlert, setOpenDeleteAlert] = useState<number | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
 
   const handleDelete = async (id: number) => {
+    setDeletingId(id)
+    
     try {
+
       const res = await fetch(`/api/discussion/${id}`, {
         method: "DELETE",
       })
 
       if (!res.ok) {
-        toast.error("Erreur lors de la suppression");
-        throw new Error("Erreur lors de la suppression");
+        // En cas d'erreur, on recharge pour rétablir l'état correct
+        toast.error("Erreur lors de la suppression")
+        // Ici on pourrait aussi re-ajouter l'élément localement
+        return null;
       }
+	    // Mise à jour optimiste - on retire immédiatement de l'interface
+	    removeSession(id)
+
       toast.success("Discussion supprimée")
 
-      try {
-
-      } catch (error) {
-
-      }
-      // Si on est sur la discussion supprimée, on redirige vers /frontoffice
+      // Si on est sur la discussion supprimée, on redirige
       if (pathname && pathname.includes(`/chat/${id}`)) {
         router.push("/frontoffice/")
-
-        // ⏺️ on rafraîchit la liste dans le sidebar
-        await refreshHistory()
       }
     } catch (err) {
       toast.error("Erreur lors de la suppression")
+      // En cas d'erreur réseau, recharger les données
+    } finally {
+      setDeletingId(null)
+      setOpenDeleteAlert(null)
     }
   }
 
@@ -92,7 +96,7 @@ export function NavProjects({
         {projects.map((item) => (
           <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
+              <a href={item.url} className={deletingId === item.id ? "opacity-50" : ""}>
                 <item.icon />
                 <span>{item.name}</span>
               </a>
@@ -118,28 +122,35 @@ export function NavProjects({
                   <span>Share Project</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setOpenDeleteAlert(true)}>
+                <DropdownMenuItem onClick={() => setOpenDeleteAlert(item.id)}>
                   <Trash2 className="text-muted-foreground" />
                   <span>Supprimer</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <AlertDialog open={openDeleteAlert} onOpenChange={setOpenDeleteAlert}>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Cette action est irréversible. La discussion sera définitivement supprimée.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annuler</AlertDialogCancel>
-                  <AlertDialogAction onClick={() => handleDelete(item.id)}>Continuer</AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
           </SidebarMenuItem>
         ))}
+        
+        <AlertDialog open={openDeleteAlert !== null} onOpenChange={() => setOpenDeleteAlert(null)}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Cette action est irréversible. La discussion sera définitivement supprimée.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => openDeleteAlert && handleDelete(openDeleteAlert)}
+                disabled={deletingId !== null}
+              >
+                {deletingId !== null ? "Suppression..." : "Continuer"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        
         <SidebarMenuItem>
           <SidebarMenuButton>
             <MoreHorizontal />

@@ -21,6 +21,7 @@ import {
 import Image from "next/image"
 import { getErrorMessage } from "@/utils/error-handler"
 import { useSidebarData } from "./SidebarDataContext"
+import {useActionState, useReducer, useRef, useState} from "react";
 
 type ChatSession = {
   id: number
@@ -64,7 +65,6 @@ export function AppSidebar({ user, ...props }: {
 } &
   React.ComponentProps<typeof Sidebar>) {
   const { history: historyItems } = useSidebarData()
-
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
