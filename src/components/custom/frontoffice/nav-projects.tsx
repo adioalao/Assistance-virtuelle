@@ -38,6 +38,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import Link from "next/link"
 
 export function NavProjects({
 	projects,
@@ -91,10 +92,10 @@ export function NavProjects({
 				{projects.map((item) => (
 					<SidebarMenuItem key={item.id}>
 						<SidebarMenuButton asChild>
-							<a href={item.url} className={deletingId === item.id ? "opacity-50" : ""}>
+							<Link href={item.url} className={deletingId === item.id ? "opacity-50" : ""}>
 								<item.icon />
 								<span>{item.name}</span>
-							</a>
+							</Link>
 						</SidebarMenuButton>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
