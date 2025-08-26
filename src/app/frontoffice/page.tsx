@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import ChatInterface from '@/components/custom/frontoffice/ChatInterface';
 
 export default function Home() {
