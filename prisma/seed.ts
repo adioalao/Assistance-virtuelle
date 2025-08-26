@@ -158,6 +158,24 @@ async function main() {
         faqGroupId: 4,
         parentId: 10,
         userId: 2
+      },
+      {
+        id: 13,
+        content: 'Combien coûte la TVA',
+        status: 'approved',
+        order: 1,
+        faqGroupId: 1,
+        parentId: 3,
+        userId: 2
+      },
+      {
+        id: 14,
+        content: 'Combien coûte les frais de douane',
+        status: 'approved',
+        order: 1,
+        faqGroupId: 1,
+        parentId: 3,
+        userId: 2
       }
     ],
     skipDuplicates: true
@@ -213,6 +231,14 @@ async function main() {
       {
         questionId: 12,
         content: 'Oui, certaines zones sont réservées aux douanes et à la logistique militaire.'
+      },
+      {
+        questionId: 13,
+        content: 'La TVA est égale à 18% du prix du produit'
+      },
+      {
+        questionId: 14,
+        content: 'Cela varie en fonction de la période et du produit concerné'
       }
     ],
     skipDuplicates: true
