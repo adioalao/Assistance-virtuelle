@@ -10,8 +10,6 @@ const ChatPage = () => {
    const params = useParams();
    const id = Number(params?.id);
    const [messages, setMessages] = useState<Message[]>([]);
-   const [inputValue, setInputValue] = useState<string>("");
-   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
    // ✅ Récupère la session + questions si liées
    useEffect(() => {
@@ -46,7 +44,6 @@ const ChatPage = () => {
                         console.log(`Erreur récupération de la question liée (ID: ${m.questionId})`, e);
                      }
                   }
-
                   return {
                      id: m.id,
                      sender: m.authorType === "ai" ? "ai" : "user",
@@ -56,6 +53,7 @@ const ChatPage = () => {
                   };
                })
             );
+            console.log('mapped : ', mappedMessages);
 
             setMessages(mappedMessages);
          } catch (err) {
@@ -92,34 +90,10 @@ const ChatPage = () => {
                content: c.content,
             })),
          };
-
          setMessages((prev) => [...prev, userMessage, aiMessage]);
       } catch (err) {
          console.error("Erreur sous-question:", err);
       }
-   };
-
-   // ✅ Envoi de message
-   const handleSendMessage = (userText: string) => {
-      if (!userText.trim()) return;
-
-      const now = new Date().toISOString();
-      const userMessage: Message = {
-         id: Date.now(),
-         sender: "user",
-         text: userText,
-         timestamp: now,
-      };
-
-      const aiMessage: Message = {
-         id: Date.now() + 1,
-         sender: "ai",
-         text: "Réponse simulée par l'IA.",
-         timestamp: now,
-      };
-
-      setMessages((prev) => [...prev, userMessage, aiMessage]);
-      setInputValue("");
    };
 
    return (
@@ -140,28 +114,9 @@ const ChatPage = () => {
                   {/* 🧷 Input FIXE en bas */}
                   <div className="absolute bottom-0 left-0 right-0 flex justify-center z-20">
                      <div className="w-full max-w-4xl px-4 py-2 bg-white">
-                        <MessageInput
-                           inputValue={inputValue}
-                           setInputValue={setInputValue}
-                           handleSendMessage={() => handleSendMessage(inputValue)}
-                           textareaRef={textareaRef}
-                           onSend={handleSendMessage}
-                           onFileUpload={(fileUrl, fileType) => {
-                              const now = new Date().toISOString();
-                              const userMessage: Message = {
-                                 id: Date.now(),
-                                 sender: "user",
-                                 text: "Fichier envoyé",
-                                 fileUrl,
-                                 fileType,
-                                 timestamp: now,
-                              };
-                              setMessages((prev) => [...prev, userMessage]);
-                           }}
-                        />
+                        <MessageInput />
                      </div>
                   </div>
-
                </div>
             </div>
          </div>

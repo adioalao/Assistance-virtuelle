@@ -3,7 +3,7 @@
 */
 "use client";
 
-import React, { useState, useRef, useEffect, forwardRef} from "react";
+import React, { useState, useEffect } from "react";
 import { Message, Question } from "@/types/allTypes";
 import WelcomeMessage from "./WelcomMessage";
 import MessageInput from "./MessageInput";
@@ -11,26 +11,14 @@ import { useRouter } from "next/navigation";
 import { getErrorMessage } from "@/utils/error-handler";
 import { useSidebarData } from "./SidebarDataContext";
 
-export interface ChatbotHandle {
-  startNewSession: () => void;
-}
-
-const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
+export default function ChatInterface() {
   const [inputValue, setInputValue] = useState<string>("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null) as React.RefObject<HTMLTextAreaElement>;
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
-  
+
   // Récupération des méthodes du contexte sidebar
   const { addSession } = useSidebarData();
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [inputValue]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -123,14 +111,14 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.error || "Échec de la création");
-      
+
       // ✅ Ajout immédiat à la sidebar sans attendre le rechargement
       addSession({
         id: data.sessionId,
         title: question.content.slice(0, 25) || "(Sans titre)",
         url: `/frontoffice/chat/${data.sessionId}`
       });
-      
+
       router.push(`/frontoffice/chat/${data.sessionId}`);
     } catch (error) {
       console.log(getErrorMessage(error));
@@ -167,17 +155,11 @@ const ChatInterface = forwardRef<ChatbotHandle>((props, ref) => {
       {/* Zone de saisie */}
       <div className="absolute bottom-0 left-0 right-0 flex justify-center z-20">
         <div className="w-full max-w-4xl px-4 py-2 bg-white">
-          <MessageInput
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            handleSendMessage={() => handleSendMessage(inputValue)}
-            textareaRef={textareaRef}
-            onSend={handleSendMessage}
-          />
+          <MessageInput />
         </div>
       </div>
     </div>
   );
-});
+};
 
-export default ChatInterface;
+
