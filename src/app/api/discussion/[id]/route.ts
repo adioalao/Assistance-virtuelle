@@ -3,7 +3,7 @@ import { discussionService } from "@/lib/services/discussionService";
 import { auth } from "@/auth-jwt";
 
 
-export async function GET(req: NextRequest, { params }: { params: promise<{ id: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
    try {
       const session = await auth()
 
@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: promise<{ id: 
 2
 export async function DELETE(
    req: NextRequest,
-   { params }: {  params: promise<{ id: string }> }
+   { params }: { params: Promise<{ id: string }> }
 ) {
    const session = await auth()
    if (!session || !session.user?.email) {
